@@ -1,0 +1,13 @@
+.footer {
+    background: rgb(204,204,204);
+    width: 100%;
+    height: 100px;
+    display: table;
+    text-align: center;
+}
+.footer > .footerText {
+    display: table-cell;
+    vertical-align: middle;
+    font-family: Futura, "Trebuchet MS";
+    font-size: 18px;
+}

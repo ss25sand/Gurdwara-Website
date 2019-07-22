@@ -3,6 +3,7 @@
   grid-template: repeat(7, 1fr) / repeat(10, 1fr);
   width: 90%;
   max-height: 700px;
+  /* min-height: 600px; */
   margin: auto;
   background-color: black;
 }
@@ -70,11 +71,17 @@
     /* border: 5px solid red; */
 }
 @media screen and (max-width: 1004px) {
+  .slideshow-container {
+    max-height: 600px;
+  }
   .landscape img {
     width: 100%;
   }
 }
 @media screen and (max-width: 808px) {
+  .slideshow-container {
+    max-height: 500px;
+  }
   .portrait img {
     width: 100%;
   }

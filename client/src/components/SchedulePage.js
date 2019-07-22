@@ -11,7 +11,8 @@ export class SchedulePage extends Component {
     this.state = {
       message: '',
       textareaArray: [],
-      data: {}
+      data: {},
+      updated: false
     }
     // Bind this to the event handlers
     this.handleTextareaChange = this.handleTextareaChange.bind(this);
@@ -22,11 +23,13 @@ export class SchedulePage extends Component {
   componentWillMount() {
     // Remove unnessassary styling
     $('#body').removeClass('loginBody');
+    $('.button').hide();
     // Make Request to fetch the current schedule database
     fetch('/users')
       .then(res => res.json())
       .then(data => this.setState({ data: data }))
       .then(() => {
+        console.log(this.state.data[0].id);
         // Create array to format recieved data
         let newArray = [];
         for(let i = 0; i < 28; i++) {
@@ -46,33 +49,41 @@ export class SchedulePage extends Component {
       loginId = Number(localStorage.getItem('loginId'));
     }
     // if user has logged in at some point during their session, enable textarea editting
+    console.log(loginId);
     if(loginId) {
       fetch(`/users/login-status?id=${loginId}`)
         .then(res => res.json())
         .then(resjson => {
+          console.log(resjson);
           if(resjson) {
             $(document).ready(() => {
               $('textarea').attr('disabled', false);
+              $('.button').show();
             });
           }
         });
     }
     // Add event listener to automatically log user out on exit, reload, etc.
-    window.addEventListener("beforeunload", () => {
+    $(window).on("beforeunload", function () {
       // fetch request to change login status
-      fetch(`/users/update-login-status?id=${loginId}`)
-        .then( () => localStorage.set("loginId", 0));
-    })
+        fetch(`/users/update-login-status?id=${loginId}`)
+          .then( () => localStorage.setItem("loginId", 0));
+      return "Please don't leave me!";
+    });
   }
 
   // Make put request to Update Database when SAVE button is clicked
   handleSaveButtonClick() {
-    let endpoint = $.param({ array: this.state.textareaArray });
-    fetch(`/users/update-event?${endpoint}`)
-      .then( res => res.json())
-      .then( message => {
-        this.setState({ message: message })
-      });
+    if(this.state.updated) {
+      let endpoint = $.param({ array: this.state.textareaArray });
+      fetch(`/users/update-event?${endpoint}`)
+        .then( res => res.json())
+        .then( message => {
+          this.setState({ message: message })
+        });
+    } else {
+      this.setState({ message: "No Updates Were Made..." });
+    }
   }
 
   // Event handler to automatically update the text entered inside the textarea
@@ -93,7 +104,8 @@ export class SchedulePage extends Component {
     });
     // Set the state
     this.setState({
-      textareaArray: [...newEvent]
+      textareaArray: [...newEvent],
+      updated: true
     });
   }
 
@@ -137,13 +149,13 @@ export class SchedulePage extends Component {
 
         {/* Render weekday Headings */}
         <ul className="weekdays">
+          <li>Su</li>
           <li>Mo</li>
           <li>Tu</li>
           <li>We</li>
           <li>Th</li>
           <li>Fr</li>
           <li>Sa</li>
-          <li>Su</li>
         </ul>
 
         {/* Iterate through the current textareaArray state to create the days */}
@@ -158,7 +170,7 @@ export class SchedulePage extends Component {
         </form>
 
         {/* SAVE button */}
-        <button className = "button" onClick = {this.handleSaveButtonClick}> Save </button>
+        <button className = "button" onClick = {this.handleSaveButtonClick} style={{display: "none"}}> Save </button>
 
         {/* Message Displayer */}
         <h4> {this.state.message} </h4>

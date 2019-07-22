@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {SchedulePage} from './SchedulePage.js';
 import './stylesheets/Login.css';
 import $ from 'jquery';
+import * as bcrypt from 'bcryptjs';
 
 // Component to render Login GUI
 export class Login extends Component {
@@ -17,6 +18,7 @@ export class Login extends Component {
     this.handleUsernameInput = this.handleUsernameInput.bind(this);
     this.handlePasswordInput = this.handlePasswordInput.bind(this);
     this.handleLoginClick = this.handleLoginClick.bind(this);
+    this.handleRegisterClick = this.handleRegisterClick.bind(this);
   }
 
   // Event handler to automatically update the text entered inside the username input
@@ -34,7 +36,8 @@ export class Login extends Component {
   }
 
   // Event handler for when LOGIN button is clicked
-  handleLoginClick(e) {
+  handleLoginClick() {
+    // Hash the password, before sending it as a query string
     // Make request to check if login exists with the entered creditials
     fetch(`/users/login?username=${this.state.username}&password=${this.state.password}`)
       .then(res => res.json())
@@ -47,6 +50,29 @@ export class Login extends Component {
           }
         });
       });
+  }
+
+  handleRegisterClick() {
+    const saltRounds = 10;
+    bcrypt.genSalt(saltRounds, (err, salt) => {
+      bcrypt.hash(this.state.password, salt, (err, hash) => {
+        fetch(`/users/register?username=${this.state.username}&hash=${hash}`, {method: "POST"})
+          .then(res => res.json())
+          .then(resjson => {
+            this.setState({
+              loginId: resjson
+            });
+          })
+          .then(() => {
+            if(!this.state.loginId) {
+              let message = "User Already Exists!";
+              $(document).ready( () => {
+                $("#messageArea").html(message);
+              });
+            }
+          });
+      });
+    });
   }
 
   render() {
@@ -62,6 +88,7 @@ export class Login extends Component {
               <p>Password</p>
               <input type="password" id="password" placeholder="Enter Password" onChange={this.handlePasswordInput} value={this.state.password}/>
               <div style={{"textAlign": "center"}}> <a id = "loginLink"> <button className = "button" type = "button" onClick = {this.handleLoginClick}> Login </button> </a> </div>
+              <div style={{"textAlign": "center"}}> <a id = "loginLink"> <button className = "button" type = "button" onClick = {this.handleRegisterClick}> Register </button> </a> </div>
               <div id = "messageArea"></div>
           </form>
         </div>

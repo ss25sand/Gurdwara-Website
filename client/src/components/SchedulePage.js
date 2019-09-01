@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './stylesheets/SchedulePage.css';
 import './stylesheets/styleSheet.css';
 import $ from 'jquery';
+import { Query } from 'react-apollo'
+import gql from 'graphql-tag'
 
 // Component to render Calendar
 export class SchedulePage extends Component {
@@ -13,7 +15,7 @@ export class SchedulePage extends Component {
       textareaArray: [],
       data: {},
       updated: false
-    }
+    };
     // Bind this to the event handlers
     this.handleTextareaChange = this.handleTextareaChange.bind(this);
     this.handleSaveButtonClick = this.handleSaveButtonClick.bind(this);
@@ -21,7 +23,7 @@ export class SchedulePage extends Component {
 
   // Called before the Schedule is Rendered
   componentWillMount() {
-    // Remove unnessassary styling
+    // Remove unnecessary styling
     $('#body').removeClass('loginBody');
     $('.button').hide();
     // Make Request to fetch the current schedule database
@@ -110,25 +112,37 @@ export class SchedulePage extends Component {
   }
 
   render() {
+    const MONTH_QUERY = gql`{
+      month(dateTime: "2016-11-10T11:34:33-05:00")
+    }`;
+    /*
+    {
+       weeks {
+          days {
+            dateTime
+            weekday
+            event {
+              description
+            }
+          }
+        }
+      }
+    */
     return (
       <div className="body">
 
         {/* Header Picture*/}
         <img className = "headerPic" src = "clockWallpaper.jpg" alt = "Picture of Harmandir Sahib"/>
-
         {/* Main Heading*/}
         <h1 className = "inPicHeading"> SCHEDULE </h1>
-
         {/* Body Text*/}
         <div className = "textContainer">
-
             <h2 className = "centerText"> Book a program! </h2>
             <p>
                To book your program now, please find an available date in the schedule, and contact the Cambridge
                Gurdwara by calling <strong>(519) 658-1070</strong>, or visiting <strong>1070 Townline Road, Cambridge,
                Ontario</strong>. The changes in the schedule can be viewed shortly after the booking.
             </p>
-
         </div>
 
     {/* Calendar */}
@@ -158,7 +172,8 @@ export class SchedulePage extends Component {
           <li>Sa</li>
         </ul>
 
-        {/* Iterate through the current textareaArray state to create the days */}
+        {/* Iterate through the current textareaArray state to create the days
+        <Query query={this.MONTH_QUERY}> */}
         <form className="days">
             {this.state.textareaArray.map((day, index) => {
               let digitClass = "";
@@ -168,12 +183,20 @@ export class SchedulePage extends Component {
               return( <li> <span className = {digitClass}>{day.id}</span> <textarea id = {day.id.toString()} type = 'text' value = {day.text} onChange = {this.handleTextareaChange} disabled/> </li> );
             })}
         </form>
+        {/* </Query> */}
 
         {/* SAVE button */}
         <button className = "button" onClick = {this.handleSaveButtonClick} style={{display: "none"}}> Save </button>
 
         {/* Message Displayer */}
         <h4> {this.state.message} </h4>
+
+        <Query query={MONTH_QUERY}>
+          {
+            (result) => $.isEmptyObject(result.data) ? "" : result.data.month
+          }
+        </Query>
+
       </div>
     );
   }

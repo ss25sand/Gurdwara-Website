@@ -4,17 +4,46 @@ import(
 	"github.com/graphql-go/graphql"
 )
 
-var root = graphql.NewObject(graphql.ObjectConfig{
-	Name: "Query",
-	Fields: graphql.Fields{
-		"month": &graphql.Field{
-			Type: graphql.String,
-			Args: graphql.FieldConfigArgument{
-				"dateTime": &graphql.ArgumentConfig{
-					Type: graphql.DateTime,
+func getRootQuery(resolver *ScheduleResolver) *graphql.Object {
+	return graphql.NewObject(graphql.ObjectConfig{
+		Name: "Query",
+		Fields: graphql.Fields{
+			"getMonth": &graphql.Field{
+				Type: Month,
+				Args: graphql.FieldConfigArgument{
+					"year": &graphql.ArgumentConfig{
+						Type: graphql.Int,
+					},
+					"month": &graphql.ArgumentConfig{
+						Type: MonthType,
+					},
 				},
+				Resolve: resolver.MonthResolver,
 			},
-			Resolve: (&Resolver{}).MonthResolver,
-		},
-	}},
-)
+			"getDays": &graphql.Field{
+				Type: graphql.NewList(Day),
+				Args: graphql.FieldConfigArgument{
+					"startDate": &graphql.ArgumentConfig{
+						Type: DateType,
+					},
+					"endDate": &graphql.ArgumentConfig{
+						Type: DateType,
+					},
+				},
+				Resolve: resolver.DayResolver,
+			},
+			"getEvents": &graphql.Field{
+				Type: Event,
+				Args: graphql.FieldConfigArgument{
+					"startTime": &graphql.ArgumentConfig{
+						Type: DateType,
+					},
+					"endTime": &graphql.ArgumentConfig{
+						Type: DateType,
+					},
+				},
+				Resolve: resolver.DayResolver,
+			},
+		}},
+	)
+}

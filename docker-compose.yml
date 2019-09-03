@@ -1,0 +1,45 @@
+# docker-compose.yml
+version: '3.1'
+
+services:
+
+  gurdwara-graphql-server:
+    build:
+      context: ./backend
+      dockerfile: ./graphql/Dockerfile
+    ports:
+      - 50051:50051
+
+  gurdwara-schedule-service:
+    build:
+      context: ./backend
+      dockerfile: ./schedule-service/Dockerfile
+    ports:
+      - 50052:50051
+    environment:
+      - MICRO_ADDRESS=:50051
+      - MICRO_REGISTRY=mdns
+      - MICRO_REGISTRY_ADDRESS=mdns
+      - DB_HOST=mongodb://datastore:27017
+
+  web-client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - 4001:4001
+
+  datastore:
+    image: mongo
+    ports:
+      - 27017:27017
+
+  # database:
+  #   image: postgres
+  #   ports:
+  #     - 5432:5432
+  # environment variables
+  #       - DB_HOST=localhost
+  #       - DB_USER=sam
+  #       - DB_NAME=shippy_backend_db
+  #       - DB_PASSWORD=sam123

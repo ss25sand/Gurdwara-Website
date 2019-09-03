@@ -26,221 +26,152 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type DateTime struct {
-	DateTime             string   `protobuf:"bytes,1,opt,name=dateTime,proto3" json:"dateTime,omitempty"`
+type MonthInfo struct {
+	Year                 uint32   `protobuf:"varint,1,opt,name=Year,proto3" json:"Year,omitempty"`
+	MonthNum             uint32   `protobuf:"varint,2,opt,name=MonthNum,proto3" json:"MonthNum,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DateTime) Reset()         { *m = DateTime{} }
-func (m *DateTime) String() string { return proto.CompactTextString(m) }
-func (*DateTime) ProtoMessage()    {}
-func (*DateTime) Descriptor() ([]byte, []int) {
+func (m *MonthInfo) Reset()         { *m = MonthInfo{} }
+func (m *MonthInfo) String() string { return proto.CompactTextString(m) }
+func (*MonthInfo) ProtoMessage()    {}
+func (*MonthInfo) Descriptor() ([]byte, []int) {
 	return fileDescriptor_897fc524eec70956, []int{0}
 }
 
-func (m *DateTime) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DateTime.Unmarshal(m, b)
+func (m *MonthInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MonthInfo.Unmarshal(m, b)
 }
-func (m *DateTime) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DateTime.Marshal(b, m, deterministic)
+func (m *MonthInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MonthInfo.Marshal(b, m, deterministic)
 }
-func (m *DateTime) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DateTime.Merge(m, src)
+func (m *MonthInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MonthInfo.Merge(m, src)
 }
-func (m *DateTime) XXX_Size() int {
-	return xxx_messageInfo_DateTime.Size(m)
+func (m *MonthInfo) XXX_Size() int {
+	return xxx_messageInfo_MonthInfo.Size(m)
 }
-func (m *DateTime) XXX_DiscardUnknown() {
-	xxx_messageInfo_DateTime.DiscardUnknown(m)
+func (m *MonthInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_MonthInfo.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_DateTime proto.InternalMessageInfo
+var xxx_messageInfo_MonthInfo proto.InternalMessageInfo
 
-func (m *DateTime) GetDateTime() string {
+func (m *MonthInfo) GetYear() uint32 {
 	if m != nil {
-		return m.DateTime
+		return m.Year
 	}
-	return ""
+	return 0
 }
 
-type Event struct {
-	ID                   string    `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	DateTime             *DateTime `protobuf:"bytes,2,opt,name=dateTime,proto3" json:"dateTime,omitempty"`
-	Organizer            string    `protobuf:"bytes,3,opt,name=organizer,proto3" json:"organizer,omitempty"`
-	Description          string    `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
-	XXX_unrecognized     []byte    `json:"-"`
-	XXX_sizecache        int32     `json:"-"`
-}
-
-func (m *Event) Reset()         { *m = Event{} }
-func (m *Event) String() string { return proto.CompactTextString(m) }
-func (*Event) ProtoMessage()    {}
-func (*Event) Descriptor() ([]byte, []int) {
-	return fileDescriptor_897fc524eec70956, []int{1}
-}
-
-func (m *Event) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Event.Unmarshal(m, b)
-}
-func (m *Event) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Event.Marshal(b, m, deterministic)
-}
-func (m *Event) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Event.Merge(m, src)
-}
-func (m *Event) XXX_Size() int {
-	return xxx_messageInfo_Event.Size(m)
-}
-func (m *Event) XXX_DiscardUnknown() {
-	xxx_messageInfo_Event.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Event proto.InternalMessageInfo
-
-func (m *Event) GetID() string {
+func (m *MonthInfo) GetMonthNum() uint32 {
 	if m != nil {
-		return m.ID
+		return m.MonthNum
 	}
-	return ""
+	return 0
 }
 
-func (m *Event) GetDateTime() *DateTime {
-	if m != nil {
-		return m.DateTime
-	}
-	return nil
-}
-
-func (m *Event) GetOrganizer() string {
-	if m != nil {
-		return m.Organizer
-	}
-	return ""
-}
-
-func (m *Event) GetDescription() string {
-	if m != nil {
-		return m.Description
-	}
-	return ""
-}
-
-type Day struct {
-	ID                   string    `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	DateTime             *DateTime `protobuf:"bytes,2,opt,name=dateTime,proto3" json:"dateTime,omitempty"`
-	Weekday              string    `protobuf:"bytes,3,opt,name=weekday,proto3" json:"weekday,omitempty"`
-	Events               []string  `protobuf:"bytes,4,rep,name=events,proto3" json:"events,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
-	XXX_unrecognized     []byte    `json:"-"`
-	XXX_sizecache        int32     `json:"-"`
-}
-
-func (m *Day) Reset()         { *m = Day{} }
-func (m *Day) String() string { return proto.CompactTextString(m) }
-func (*Day) ProtoMessage()    {}
-func (*Day) Descriptor() ([]byte, []int) {
-	return fileDescriptor_897fc524eec70956, []int{2}
-}
-
-func (m *Day) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Day.Unmarshal(m, b)
-}
-func (m *Day) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Day.Marshal(b, m, deterministic)
-}
-func (m *Day) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Day.Merge(m, src)
-}
-func (m *Day) XXX_Size() int {
-	return xxx_messageInfo_Day.Size(m)
-}
-func (m *Day) XXX_DiscardUnknown() {
-	xxx_messageInfo_Day.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Day proto.InternalMessageInfo
-
-func (m *Day) GetID() string {
-	if m != nil {
-		return m.ID
-	}
-	return ""
-}
-
-func (m *Day) GetDateTime() *DateTime {
-	if m != nil {
-		return m.DateTime
-	}
-	return nil
-}
-
-func (m *Day) GetWeekday() string {
-	if m != nil {
-		return m.Weekday
-	}
-	return ""
-}
-
-func (m *Day) GetEvents() []string {
-	if m != nil {
-		return m.Events
-	}
-	return nil
-}
-
-type Week struct {
-	ID                   string   `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	Days                 []*Day   `protobuf:"bytes,2,rep,name=days,proto3" json:"days,omitempty"`
+type DaysInfo struct {
+	StartDate            string   `protobuf:"bytes,1,opt,name=StartDate,proto3" json:"StartDate,omitempty"`
+	EndDate              string   `protobuf:"bytes,2,opt,name=EndDate,proto3" json:"EndDate,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Week) Reset()         { *m = Week{} }
-func (m *Week) String() string { return proto.CompactTextString(m) }
-func (*Week) ProtoMessage()    {}
-func (*Week) Descriptor() ([]byte, []int) {
-	return fileDescriptor_897fc524eec70956, []int{3}
+func (m *DaysInfo) Reset()         { *m = DaysInfo{} }
+func (m *DaysInfo) String() string { return proto.CompactTextString(m) }
+func (*DaysInfo) ProtoMessage()    {}
+func (*DaysInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_897fc524eec70956, []int{1}
 }
 
-func (m *Week) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Week.Unmarshal(m, b)
+func (m *DaysInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DaysInfo.Unmarshal(m, b)
 }
-func (m *Week) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Week.Marshal(b, m, deterministic)
+func (m *DaysInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DaysInfo.Marshal(b, m, deterministic)
 }
-func (m *Week) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Week.Merge(m, src)
+func (m *DaysInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DaysInfo.Merge(m, src)
 }
-func (m *Week) XXX_Size() int {
-	return xxx_messageInfo_Week.Size(m)
+func (m *DaysInfo) XXX_Size() int {
+	return xxx_messageInfo_DaysInfo.Size(m)
 }
-func (m *Week) XXX_DiscardUnknown() {
-	xxx_messageInfo_Week.DiscardUnknown(m)
+func (m *DaysInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_DaysInfo.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Week proto.InternalMessageInfo
+var xxx_messageInfo_DaysInfo proto.InternalMessageInfo
 
-func (m *Week) GetID() string {
+func (m *DaysInfo) GetStartDate() string {
 	if m != nil {
-		return m.ID
+		return m.StartDate
 	}
 	return ""
 }
 
-func (m *Week) GetDays() []*Day {
+func (m *DaysInfo) GetEndDate() string {
 	if m != nil {
-		return m.Days
+		return m.EndDate
 	}
-	return nil
+	return ""
+}
+
+type EventsInfo struct {
+	StartDateTime        string   `protobuf:"bytes,1,opt,name=StartDateTime,proto3" json:"StartDateTime,omitempty"`
+	EndDateTime          string   `protobuf:"bytes,2,opt,name=EndDateTime,proto3" json:"EndDateTime,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *EventsInfo) Reset()         { *m = EventsInfo{} }
+func (m *EventsInfo) String() string { return proto.CompactTextString(m) }
+func (*EventsInfo) ProtoMessage()    {}
+func (*EventsInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_897fc524eec70956, []int{2}
+}
+
+func (m *EventsInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EventsInfo.Unmarshal(m, b)
+}
+func (m *EventsInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EventsInfo.Marshal(b, m, deterministic)
+}
+func (m *EventsInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EventsInfo.Merge(m, src)
+}
+func (m *EventsInfo) XXX_Size() int {
+	return xxx_messageInfo_EventsInfo.Size(m)
+}
+func (m *EventsInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_EventsInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EventsInfo proto.InternalMessageInfo
+
+func (m *EventsInfo) GetStartDateTime() string {
+	if m != nil {
+		return m.StartDateTime
+	}
+	return ""
+}
+
+func (m *EventsInfo) GetEndDateTime() string {
+	if m != nil {
+		return m.EndDateTime
+	}
+	return ""
 }
 
 type Month struct {
 	ID                   string   `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	Weeks                []*Week  `protobuf:"bytes,2,rep,name=weeks,proto3" json:"weeks,omitempty"`
+	MonthNum             uint32   `protobuf:"varint,2,opt,name=MonthNum,proto3" json:"MonthNum,omitempty"`
+	Days                 []*Day   `protobuf:"bytes,3,rep,name=Days,proto3" json:"Days,omitempty"`
+	Year                 uint32   `protobuf:"varint,4,opt,name=Year,proto3" json:"Year,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -250,7 +181,7 @@ func (m *Month) Reset()         { *m = Month{} }
 func (m *Month) String() string { return proto.CompactTextString(m) }
 func (*Month) ProtoMessage()    {}
 func (*Month) Descriptor() ([]byte, []int) {
-	return fileDescriptor_897fc524eec70956, []int{4}
+	return fileDescriptor_897fc524eec70956, []int{3}
 }
 
 func (m *Month) XXX_Unmarshal(b []byte) error {
@@ -278,46 +209,200 @@ func (m *Month) GetID() string {
 	return ""
 }
 
-func (m *Month) GetWeeks() []*Week {
+func (m *Month) GetMonthNum() uint32 {
 	if m != nil {
-		return m.Weeks
+		return m.MonthNum
+	}
+	return 0
+}
+
+func (m *Month) GetDays() []*Day {
+	if m != nil {
+		return m.Days
 	}
 	return nil
 }
 
+func (m *Month) GetYear() uint32 {
+	if m != nil {
+		return m.Year
+	}
+	return 0
+}
+
+type Day struct {
+	ID                   string   `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	Date                 string   `protobuf:"bytes,2,opt,name=Date,proto3" json:"Date,omitempty"`
+	WeekdayNum           uint32   `protobuf:"varint,3,opt,name=WeekdayNum,proto3" json:"WeekdayNum,omitempty"`
+	Events               []*Event `protobuf:"bytes,4,rep,name=Events,proto3" json:"Events,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Day) Reset()         { *m = Day{} }
+func (m *Day) String() string { return proto.CompactTextString(m) }
+func (*Day) ProtoMessage()    {}
+func (*Day) Descriptor() ([]byte, []int) {
+	return fileDescriptor_897fc524eec70956, []int{4}
+}
+
+func (m *Day) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Day.Unmarshal(m, b)
+}
+func (m *Day) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Day.Marshal(b, m, deterministic)
+}
+func (m *Day) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Day.Merge(m, src)
+}
+func (m *Day) XXX_Size() int {
+	return xxx_messageInfo_Day.Size(m)
+}
+func (m *Day) XXX_DiscardUnknown() {
+	xxx_messageInfo_Day.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Day proto.InternalMessageInfo
+
+func (m *Day) GetID() string {
+	if m != nil {
+		return m.ID
+	}
+	return ""
+}
+
+func (m *Day) GetDate() string {
+	if m != nil {
+		return m.Date
+	}
+	return ""
+}
+
+func (m *Day) GetWeekdayNum() uint32 {
+	if m != nil {
+		return m.WeekdayNum
+	}
+	return 0
+}
+
+func (m *Day) GetEvents() []*Event {
+	if m != nil {
+		return m.Events
+	}
+	return nil
+}
+
+type Event struct {
+	ID                   string   `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
+	StartDateTime        string   `protobuf:"bytes,2,opt,name=StartDateTime,proto3" json:"StartDateTime,omitempty"`
+	EndDateTime          string   `protobuf:"bytes,3,opt,name=EndDateTime,proto3" json:"EndDateTime,omitempty"`
+	Organizer            string   `protobuf:"bytes,4,opt,name=Organizer,proto3" json:"Organizer,omitempty"`
+	Description          string   `protobuf:"bytes,5,opt,name=Description,proto3" json:"Description,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Event) Reset()         { *m = Event{} }
+func (m *Event) String() string { return proto.CompactTextString(m) }
+func (*Event) ProtoMessage()    {}
+func (*Event) Descriptor() ([]byte, []int) {
+	return fileDescriptor_897fc524eec70956, []int{5}
+}
+
+func (m *Event) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Event.Unmarshal(m, b)
+}
+func (m *Event) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Event.Marshal(b, m, deterministic)
+}
+func (m *Event) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Event.Merge(m, src)
+}
+func (m *Event) XXX_Size() int {
+	return xxx_messageInfo_Event.Size(m)
+}
+func (m *Event) XXX_DiscardUnknown() {
+	xxx_messageInfo_Event.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Event proto.InternalMessageInfo
+
+func (m *Event) GetID() string {
+	if m != nil {
+		return m.ID
+	}
+	return ""
+}
+
+func (m *Event) GetStartDateTime() string {
+	if m != nil {
+		return m.StartDateTime
+	}
+	return ""
+}
+
+func (m *Event) GetEndDateTime() string {
+	if m != nil {
+		return m.EndDateTime
+	}
+	return ""
+}
+
+func (m *Event) GetOrganizer() string {
+	if m != nil {
+		return m.Organizer
+	}
+	return ""
+}
+
+func (m *Event) GetDescription() string {
+	if m != nil {
+		return m.Description
+	}
+	return ""
+}
+
 func init() {
-	proto.RegisterType((*DateTime)(nil), "gurdwara.schedule.service.DateTime")
-	proto.RegisterType((*Event)(nil), "gurdwara.schedule.service.Event")
-	proto.RegisterType((*Day)(nil), "gurdwara.schedule.service.Day")
-	proto.RegisterType((*Week)(nil), "gurdwara.schedule.service.Week")
+	proto.RegisterType((*MonthInfo)(nil), "gurdwara.schedule.service.MonthInfo")
+	proto.RegisterType((*DaysInfo)(nil), "gurdwara.schedule.service.DaysInfo")
+	proto.RegisterType((*EventsInfo)(nil), "gurdwara.schedule.service.EventsInfo")
 	proto.RegisterType((*Month)(nil), "gurdwara.schedule.service.Month")
+	proto.RegisterType((*Day)(nil), "gurdwara.schedule.service.Day")
+	proto.RegisterType((*Event)(nil), "gurdwara.schedule.service.Event")
 }
 
 func init() { proto.RegisterFile("proto/schedule/schedule.proto", fileDescriptor_897fc524eec70956) }
 
 var fileDescriptor_897fc524eec70956 = []byte{
-	// 336 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x93, 0xcb, 0x4a, 0xc3, 0x40,
-	0x14, 0x86, 0xcd, 0xa5, 0xb7, 0x53, 0x50, 0x98, 0x85, 0xc4, 0xe2, 0x65, 0x18, 0x41, 0xb2, 0x8a,
-	0x12, 0x71, 0xed, 0x26, 0x52, 0x2a, 0xe8, 0x22, 0xad, 0xb8, 0x1e, 0x3b, 0x87, 0x36, 0x54, 0x93,
-	0x32, 0x99, 0xb6, 0xc4, 0x27, 0xf0, 0x11, 0x7c, 0x46, 0x9f, 0x42, 0x32, 0x49, 0x2f, 0x50, 0x0c,
-	0x2e, 0xb2, 0x9b, 0x73, 0xfe, 0x3f, 0xdf, 0xfc, 0xfc, 0x43, 0xe0, 0x6c, 0x2e, 0x13, 0x95, 0x5c,
-	0xa7, 0xe3, 0x29, 0x8a, 0xc5, 0x3b, 0x6e, 0x0e, 0x9e, 0xde, 0x93, 0x93, 0xc9, 0x42, 0x8a, 0x15,
-	0x97, 0xdc, 0xdb, 0x08, 0x29, 0xca, 0x65, 0x34, 0x46, 0x76, 0x05, 0xed, 0x80, 0x2b, 0x1c, 0x45,
-	0x1f, 0x48, 0x7a, 0xd0, 0x16, 0xe5, 0xd9, 0x31, 0xa8, 0xe1, 0x76, 0xc2, 0xcd, 0xcc, 0xbe, 0x0d,
-	0x68, 0x3c, 0x2c, 0x31, 0x56, 0xe4, 0x10, 0xcc, 0x41, 0x50, 0xea, 0xe6, 0x20, 0x20, 0xf7, 0x3b,
-	0x5f, 0x99, 0xd4, 0x70, 0xbb, 0xfe, 0xa5, 0xf7, 0xe7, 0x7d, 0xde, 0xfa, 0xb2, 0x2d, 0x9a, 0x9c,
-	0x42, 0x27, 0x91, 0x13, 0x1e, 0x47, 0x9f, 0x28, 0x1d, 0x4b, 0x73, 0xb7, 0x0b, 0x42, 0xa1, 0x2b,
-	0x30, 0x1d, 0xcb, 0x68, 0xae, 0xa2, 0x24, 0x76, 0x6c, 0xad, 0xef, 0xae, 0xd8, 0x97, 0x01, 0x56,
-	0xc0, 0xb3, 0xfa, 0x83, 0x39, 0xd0, 0x5a, 0x21, 0xce, 0x04, 0xcf, 0xca, 0x58, 0xeb, 0x91, 0x1c,
-	0x43, 0x13, 0xf3, 0x32, 0x52, 0xc7, 0xa6, 0x96, 0xdb, 0x09, 0xcb, 0x89, 0x3d, 0x82, 0xfd, 0x8a,
-	0x38, 0xdb, 0x8b, 0xe2, 0x83, 0x2d, 0x78, 0x96, 0x3a, 0x26, 0xb5, 0xdc, 0xae, 0x7f, 0x5e, 0x19,
-	0x23, 0x0b, 0xb5, 0x97, 0x3d, 0x43, 0xe3, 0x29, 0x89, 0xd5, 0x74, 0x0f, 0x76, 0x07, 0x8d, 0x3c,
-	0xc7, 0x9a, 0x76, 0x51, 0x41, 0xcb, 0xc3, 0x84, 0x85, 0xdb, 0xff, 0x31, 0xe1, 0x68, 0x58, 0x1a,
-	0x86, 0x85, 0x4e, 0x5e, 0xa0, 0xdd, 0x47, 0x55, 0xbc, 0xeb, 0x7f, 0xca, 0xe9, 0xd1, 0x0a, 0x93,
-	0x4e, 0xcb, 0x0e, 0x6e, 0x0c, 0x32, 0x84, 0x66, 0x1f, 0x55, 0xfe, 0x26, 0x35, 0x42, 0x47, 0xd0,
-	0xea, 0xa3, 0xd2, 0xf5, 0xd6, 0x48, 0x2d, 0x1a, 0x28, 0x8a, 0xae, 0x0f, 0xfb, 0xd6, 0xd4, 0x3f,
-	0xde, 0xed, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xb7, 0x76, 0x60, 0x85, 0x99, 0x03, 0x00, 0x00,
+	// 405 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x53, 0x3d, 0x6f, 0xe2, 0x40,
+	0x10, 0xc5, 0x1f, 0x7c, 0x78, 0x10, 0x77, 0xd2, 0x56, 0x3e, 0x74, 0x87, 0xac, 0x3d, 0x0a, 0x2a,
+	0xdf, 0x89, 0x6b, 0x4e, 0x4a, 0x17, 0x19, 0x21, 0x8a, 0x24, 0x92, 0x41, 0x42, 0x29, 0x37, 0x78,
+	0x03, 0x56, 0x82, 0x8d, 0xd6, 0x0b, 0x91, 0x93, 0x32, 0x7f, 0x21, 0x7d, 0xfe, 0x6a, 0xe4, 0x59,
+	0x63, 0x88, 0xac, 0x98, 0x14, 0xe9, 0x66, 0xdf, 0xbe, 0x79, 0x7e, 0xf3, 0x66, 0x0d, 0xbf, 0x36,
+	0x22, 0x96, 0xf1, 0x9f, 0x64, 0xb1, 0xe2, 0xc1, 0xf6, 0x9e, 0x17, 0x85, 0x8b, 0x38, 0xf9, 0xb1,
+	0xdc, 0x8a, 0xe0, 0x81, 0x09, 0xe6, 0x16, 0x17, 0x09, 0x17, 0xbb, 0x70, 0xc1, 0xe9, 0x19, 0x58,
+	0x17, 0x71, 0x24, 0x57, 0x93, 0xe8, 0x36, 0x26, 0x04, 0xcc, 0x6b, 0xce, 0x84, 0xad, 0x39, 0xda,
+	0xa0, 0xe3, 0x63, 0x4d, 0xba, 0xd0, 0x42, 0xc2, 0xe5, 0x76, 0x6d, 0xeb, 0x88, 0x17, 0x67, 0x7a,
+	0x0e, 0x2d, 0x8f, 0xa5, 0x09, 0xf6, 0xfe, 0x04, 0x6b, 0x2a, 0x99, 0x90, 0x1e, 0x93, 0x1c, 0x05,
+	0x2c, 0xff, 0x00, 0x10, 0x1b, 0x9a, 0xa3, 0x28, 0xc0, 0x3b, 0x1d, 0xef, 0xf6, 0x47, 0x3a, 0x03,
+	0x18, 0xed, 0x78, 0x24, 0x95, 0x4a, 0x1f, 0x3a, 0x45, 0xd3, 0x2c, 0x5c, 0xef, 0x95, 0xde, 0x83,
+	0xc4, 0x81, 0x76, 0xde, 0x8e, 0x1c, 0xa5, 0x78, 0x0c, 0xd1, 0x27, 0xa8, 0xa3, 0x4b, 0xf2, 0x0d,
+	0xf4, 0x89, 0x97, 0xab, 0xe8, 0x13, 0xaf, 0x6a, 0x1c, 0x32, 0x04, 0x33, 0x1b, 0xc7, 0x36, 0x1c,
+	0x63, 0xd0, 0x1e, 0xf6, 0xdc, 0x0f, 0x53, 0x73, 0x3d, 0x96, 0xfa, 0xc8, 0x2d, 0x22, 0x33, 0x0f,
+	0x91, 0xd1, 0x67, 0x0d, 0x0c, 0x8f, 0xa5, 0xa5, 0x6f, 0x93, 0x4c, 0xbf, 0x48, 0x00, 0x6b, 0xd2,
+	0x03, 0x98, 0x73, 0x7e, 0x17, 0xb0, 0x34, 0x73, 0x64, 0xa0, 0xca, 0x11, 0x42, 0xfe, 0x43, 0x43,
+	0xc5, 0x63, 0x9b, 0xe8, 0xca, 0xa9, 0x70, 0x85, 0x44, 0x3f, 0xe7, 0xd3, 0x57, 0x0d, 0xea, 0x58,
+	0x96, 0x7c, 0x94, 0x42, 0xd6, 0x3f, 0x11, 0xb2, 0x51, 0x0a, 0x39, 0x5b, 0xf9, 0x95, 0x58, 0xb2,
+	0x28, 0x7c, 0xe4, 0x2a, 0x00, 0xcb, 0x3f, 0x00, 0x59, 0xbf, 0xc7, 0x93, 0x85, 0x08, 0x37, 0x32,
+	0x8c, 0x23, 0xbb, 0xae, 0xfa, 0x8f, 0xa0, 0xe1, 0x8b, 0x0e, 0xdf, 0xa7, 0xf9, 0x10, 0x53, 0x35,
+	0x03, 0x99, 0x41, 0x6b, 0xcc, 0xa5, 0xda, 0x5d, 0xbf, 0x62, 0xd6, 0xe2, 0xd1, 0x76, 0x9d, 0x53,
+	0x2c, 0x5a, 0x23, 0x3e, 0x34, 0xc7, 0x5c, 0xe2, 0xc2, 0x7e, 0x57, 0xaf, 0x15, 0x9f, 0x61, 0xf7,
+	0xc4, 0xee, 0x69, 0xed, 0xaf, 0x46, 0xe6, 0x60, 0x8d, 0xb9, 0x54, 0x61, 0x7f, 0x81, 0x55, 0x14,
+	0xca, 0x84, 0x6f, 0x1a, 0xf8, 0xd3, 0xfe, 0x7b, 0x0b, 0x00, 0x00, 0xff, 0xff, 0xad, 0xc2, 0x26,
+	0x57, 0xd5, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -328,10 +413,9 @@ var _ server.Option
 // Client API for ScheduleService service
 
 type ScheduleServiceClient interface {
-	GetEvent(ctx context.Context, in *DateTime, opts ...client.CallOption) (ScheduleService_GetEventClient, error)
-	GetDay(ctx context.Context, in *DateTime, opts ...client.CallOption) (ScheduleService_GetDayClient, error)
-	GetWeek(ctx context.Context, in *DateTime, opts ...client.CallOption) (ScheduleService_GetWeekClient, error)
-	GetMonth(ctx context.Context, in *DateTime, opts ...client.CallOption) (ScheduleService_GetMonthClient, error)
+	GetMonth(ctx context.Context, in *MonthInfo, opts ...client.CallOption) (*Month, error)
+	GetDays(ctx context.Context, in *DaysInfo, opts ...client.CallOption) (ScheduleService_GetDaysClient, error)
+	GetEvents(ctx context.Context, in *MonthInfo, opts ...client.CallOption) (ScheduleService_GetEventsClient, error)
 }
 
 type scheduleServiceClient struct {
@@ -352,8 +436,18 @@ func NewScheduleServiceClient(serviceName string, c client.Client) ScheduleServi
 	}
 }
 
-func (c *scheduleServiceClient) GetEvent(ctx context.Context, in *DateTime, opts ...client.CallOption) (ScheduleService_GetEventClient, error) {
-	req := c.c.NewRequest(c.serviceName, "ScheduleService.GetEvent", &DateTime{})
+func (c *scheduleServiceClient) GetMonth(ctx context.Context, in *MonthInfo, opts ...client.CallOption) (*Month, error) {
+	req := c.c.NewRequest(c.serviceName, "ScheduleService.GetMonth", in)
+	out := new(Month)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *scheduleServiceClient) GetDays(ctx context.Context, in *DaysInfo, opts ...client.CallOption) (ScheduleService_GetDaysClient, error) {
+	req := c.c.NewRequest(c.serviceName, "ScheduleService.GetDays", &DaysInfo{})
 	stream, err := c.c.Stream(ctx, req, opts...)
 	if err != nil {
 		return nil, err
@@ -361,34 +455,34 @@ func (c *scheduleServiceClient) GetEvent(ctx context.Context, in *DateTime, opts
 	if err := stream.Send(in); err != nil {
 		return nil, err
 	}
-	return &scheduleServiceGetEventClient{stream}, nil
+	return &scheduleServiceGetDaysClient{stream}, nil
 }
 
-type ScheduleService_GetEventClient interface {
+type ScheduleService_GetDaysClient interface {
 	SendMsg(interface{}) error
 	RecvMsg(interface{}) error
 	Close() error
-	Recv() (*Month, error)
+	Recv() (*Day, error)
 }
 
-type scheduleServiceGetEventClient struct {
+type scheduleServiceGetDaysClient struct {
 	stream client.Streamer
 }
 
-func (x *scheduleServiceGetEventClient) Close() error {
+func (x *scheduleServiceGetDaysClient) Close() error {
 	return x.stream.Close()
 }
 
-func (x *scheduleServiceGetEventClient) SendMsg(m interface{}) error {
+func (x *scheduleServiceGetDaysClient) SendMsg(m interface{}) error {
 	return x.stream.Send(m)
 }
 
-func (x *scheduleServiceGetEventClient) RecvMsg(m interface{}) error {
+func (x *scheduleServiceGetDaysClient) RecvMsg(m interface{}) error {
 	return x.stream.Recv(m)
 }
 
-func (x *scheduleServiceGetEventClient) Recv() (*Month, error) {
-	m := new(Month)
+func (x *scheduleServiceGetDaysClient) Recv() (*Day, error) {
+	m := new(Day)
 	err := x.stream.Recv(m)
 	if err != nil {
 		return nil, err
@@ -396,8 +490,8 @@ func (x *scheduleServiceGetEventClient) Recv() (*Month, error) {
 	return m, nil
 }
 
-func (c *scheduleServiceClient) GetDay(ctx context.Context, in *DateTime, opts ...client.CallOption) (ScheduleService_GetDayClient, error) {
-	req := c.c.NewRequest(c.serviceName, "ScheduleService.GetDay", &DateTime{})
+func (c *scheduleServiceClient) GetEvents(ctx context.Context, in *MonthInfo, opts ...client.CallOption) (ScheduleService_GetEventsClient, error) {
+	req := c.c.NewRequest(c.serviceName, "ScheduleService.GetEvents", &MonthInfo{})
 	stream, err := c.c.Stream(ctx, req, opts...)
 	if err != nil {
 		return nil, err
@@ -405,122 +499,34 @@ func (c *scheduleServiceClient) GetDay(ctx context.Context, in *DateTime, opts .
 	if err := stream.Send(in); err != nil {
 		return nil, err
 	}
-	return &scheduleServiceGetDayClient{stream}, nil
+	return &scheduleServiceGetEventsClient{stream}, nil
 }
 
-type ScheduleService_GetDayClient interface {
+type ScheduleService_GetEventsClient interface {
 	SendMsg(interface{}) error
 	RecvMsg(interface{}) error
 	Close() error
-	Recv() (*Month, error)
+	Recv() (*Event, error)
 }
 
-type scheduleServiceGetDayClient struct {
+type scheduleServiceGetEventsClient struct {
 	stream client.Streamer
 }
 
-func (x *scheduleServiceGetDayClient) Close() error {
+func (x *scheduleServiceGetEventsClient) Close() error {
 	return x.stream.Close()
 }
 
-func (x *scheduleServiceGetDayClient) SendMsg(m interface{}) error {
+func (x *scheduleServiceGetEventsClient) SendMsg(m interface{}) error {
 	return x.stream.Send(m)
 }
 
-func (x *scheduleServiceGetDayClient) RecvMsg(m interface{}) error {
+func (x *scheduleServiceGetEventsClient) RecvMsg(m interface{}) error {
 	return x.stream.Recv(m)
 }
 
-func (x *scheduleServiceGetDayClient) Recv() (*Month, error) {
-	m := new(Month)
-	err := x.stream.Recv(m)
-	if err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *scheduleServiceClient) GetWeek(ctx context.Context, in *DateTime, opts ...client.CallOption) (ScheduleService_GetWeekClient, error) {
-	req := c.c.NewRequest(c.serviceName, "ScheduleService.GetWeek", &DateTime{})
-	stream, err := c.c.Stream(ctx, req, opts...)
-	if err != nil {
-		return nil, err
-	}
-	if err := stream.Send(in); err != nil {
-		return nil, err
-	}
-	return &scheduleServiceGetWeekClient{stream}, nil
-}
-
-type ScheduleService_GetWeekClient interface {
-	SendMsg(interface{}) error
-	RecvMsg(interface{}) error
-	Close() error
-	Recv() (*Month, error)
-}
-
-type scheduleServiceGetWeekClient struct {
-	stream client.Streamer
-}
-
-func (x *scheduleServiceGetWeekClient) Close() error {
-	return x.stream.Close()
-}
-
-func (x *scheduleServiceGetWeekClient) SendMsg(m interface{}) error {
-	return x.stream.Send(m)
-}
-
-func (x *scheduleServiceGetWeekClient) RecvMsg(m interface{}) error {
-	return x.stream.Recv(m)
-}
-
-func (x *scheduleServiceGetWeekClient) Recv() (*Month, error) {
-	m := new(Month)
-	err := x.stream.Recv(m)
-	if err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *scheduleServiceClient) GetMonth(ctx context.Context, in *DateTime, opts ...client.CallOption) (ScheduleService_GetMonthClient, error) {
-	req := c.c.NewRequest(c.serviceName, "ScheduleService.GetMonth", &DateTime{})
-	stream, err := c.c.Stream(ctx, req, opts...)
-	if err != nil {
-		return nil, err
-	}
-	if err := stream.Send(in); err != nil {
-		return nil, err
-	}
-	return &scheduleServiceGetMonthClient{stream}, nil
-}
-
-type ScheduleService_GetMonthClient interface {
-	SendMsg(interface{}) error
-	RecvMsg(interface{}) error
-	Close() error
-	Recv() (*Month, error)
-}
-
-type scheduleServiceGetMonthClient struct {
-	stream client.Streamer
-}
-
-func (x *scheduleServiceGetMonthClient) Close() error {
-	return x.stream.Close()
-}
-
-func (x *scheduleServiceGetMonthClient) SendMsg(m interface{}) error {
-	return x.stream.Send(m)
-}
-
-func (x *scheduleServiceGetMonthClient) RecvMsg(m interface{}) error {
-	return x.stream.Recv(m)
-}
-
-func (x *scheduleServiceGetMonthClient) Recv() (*Month, error) {
-	m := new(Month)
+func (x *scheduleServiceGetEventsClient) Recv() (*Event, error) {
+	m := new(Event)
 	err := x.stream.Recv(m)
 	if err != nil {
 		return nil, err
@@ -531,10 +537,9 @@ func (x *scheduleServiceGetMonthClient) Recv() (*Month, error) {
 // Server API for ScheduleService service
 
 type ScheduleServiceHandler interface {
-	GetEvent(context.Context, *DateTime, ScheduleService_GetEventStream) error
-	GetDay(context.Context, *DateTime, ScheduleService_GetDayStream) error
-	GetWeek(context.Context, *DateTime, ScheduleService_GetWeekStream) error
-	GetMonth(context.Context, *DateTime, ScheduleService_GetMonthStream) error
+	GetMonth(context.Context, *MonthInfo, *Month) error
+	GetDays(context.Context, *DaysInfo, ScheduleService_GetDaysStream) error
+	GetEvents(context.Context, *MonthInfo, ScheduleService_GetEventsStream) error
 }
 
 func RegisterScheduleServiceHandler(s server.Server, hdlr ScheduleServiceHandler, opts ...server.HandlerOption) {
@@ -545,142 +550,76 @@ type ScheduleService struct {
 	ScheduleServiceHandler
 }
 
-func (h *ScheduleService) GetEvent(ctx context.Context, stream server.Streamer) error {
-	m := new(DateTime)
+func (h *ScheduleService) GetMonth(ctx context.Context, in *MonthInfo, out *Month) error {
+	return h.ScheduleServiceHandler.GetMonth(ctx, in, out)
+}
+
+func (h *ScheduleService) GetDays(ctx context.Context, stream server.Streamer) error {
+	m := new(DaysInfo)
 	if err := stream.Recv(m); err != nil {
 		return err
 	}
-	return h.ScheduleServiceHandler.GetEvent(ctx, m, &scheduleServiceGetEventStream{stream})
+	return h.ScheduleServiceHandler.GetDays(ctx, m, &scheduleServiceGetDaysStream{stream})
 }
 
-type ScheduleService_GetEventStream interface {
+type ScheduleService_GetDaysStream interface {
 	SendMsg(interface{}) error
 	RecvMsg(interface{}) error
 	Close() error
-	Send(*Month) error
+	Send(*Day) error
 }
 
-type scheduleServiceGetEventStream struct {
+type scheduleServiceGetDaysStream struct {
 	stream server.Streamer
 }
 
-func (x *scheduleServiceGetEventStream) Close() error {
+func (x *scheduleServiceGetDaysStream) Close() error {
 	return x.stream.Close()
 }
 
-func (x *scheduleServiceGetEventStream) SendMsg(m interface{}) error {
+func (x *scheduleServiceGetDaysStream) SendMsg(m interface{}) error {
 	return x.stream.Send(m)
 }
 
-func (x *scheduleServiceGetEventStream) RecvMsg(m interface{}) error {
+func (x *scheduleServiceGetDaysStream) RecvMsg(m interface{}) error {
 	return x.stream.Recv(m)
 }
 
-func (x *scheduleServiceGetEventStream) Send(m *Month) error {
+func (x *scheduleServiceGetDaysStream) Send(m *Day) error {
 	return x.stream.Send(m)
 }
 
-func (h *ScheduleService) GetDay(ctx context.Context, stream server.Streamer) error {
-	m := new(DateTime)
+func (h *ScheduleService) GetEvents(ctx context.Context, stream server.Streamer) error {
+	m := new(MonthInfo)
 	if err := stream.Recv(m); err != nil {
 		return err
 	}
-	return h.ScheduleServiceHandler.GetDay(ctx, m, &scheduleServiceGetDayStream{stream})
+	return h.ScheduleServiceHandler.GetEvents(ctx, m, &scheduleServiceGetEventsStream{stream})
 }
 
-type ScheduleService_GetDayStream interface {
+type ScheduleService_GetEventsStream interface {
 	SendMsg(interface{}) error
 	RecvMsg(interface{}) error
 	Close() error
-	Send(*Month) error
+	Send(*Event) error
 }
 
-type scheduleServiceGetDayStream struct {
+type scheduleServiceGetEventsStream struct {
 	stream server.Streamer
 }
 
-func (x *scheduleServiceGetDayStream) Close() error {
+func (x *scheduleServiceGetEventsStream) Close() error {
 	return x.stream.Close()
 }
 
-func (x *scheduleServiceGetDayStream) SendMsg(m interface{}) error {
+func (x *scheduleServiceGetEventsStream) SendMsg(m interface{}) error {
 	return x.stream.Send(m)
 }
 
-func (x *scheduleServiceGetDayStream) RecvMsg(m interface{}) error {
+func (x *scheduleServiceGetEventsStream) RecvMsg(m interface{}) error {
 	return x.stream.Recv(m)
 }
 
-func (x *scheduleServiceGetDayStream) Send(m *Month) error {
-	return x.stream.Send(m)
-}
-
-func (h *ScheduleService) GetWeek(ctx context.Context, stream server.Streamer) error {
-	m := new(DateTime)
-	if err := stream.Recv(m); err != nil {
-		return err
-	}
-	return h.ScheduleServiceHandler.GetWeek(ctx, m, &scheduleServiceGetWeekStream{stream})
-}
-
-type ScheduleService_GetWeekStream interface {
-	SendMsg(interface{}) error
-	RecvMsg(interface{}) error
-	Close() error
-	Send(*Month) error
-}
-
-type scheduleServiceGetWeekStream struct {
-	stream server.Streamer
-}
-
-func (x *scheduleServiceGetWeekStream) Close() error {
-	return x.stream.Close()
-}
-
-func (x *scheduleServiceGetWeekStream) SendMsg(m interface{}) error {
-	return x.stream.Send(m)
-}
-
-func (x *scheduleServiceGetWeekStream) RecvMsg(m interface{}) error {
-	return x.stream.Recv(m)
-}
-
-func (x *scheduleServiceGetWeekStream) Send(m *Month) error {
-	return x.stream.Send(m)
-}
-
-func (h *ScheduleService) GetMonth(ctx context.Context, stream server.Streamer) error {
-	m := new(DateTime)
-	if err := stream.Recv(m); err != nil {
-		return err
-	}
-	return h.ScheduleServiceHandler.GetMonth(ctx, m, &scheduleServiceGetMonthStream{stream})
-}
-
-type ScheduleService_GetMonthStream interface {
-	SendMsg(interface{}) error
-	RecvMsg(interface{}) error
-	Close() error
-	Send(*Month) error
-}
-
-type scheduleServiceGetMonthStream struct {
-	stream server.Streamer
-}
-
-func (x *scheduleServiceGetMonthStream) Close() error {
-	return x.stream.Close()
-}
-
-func (x *scheduleServiceGetMonthStream) SendMsg(m interface{}) error {
-	return x.stream.Send(m)
-}
-
-func (x *scheduleServiceGetMonthStream) RecvMsg(m interface{}) error {
-	return x.stream.Recv(m)
-}
-
-func (x *scheduleServiceGetMonthStream) Send(m *Month) error {
+func (x *scheduleServiceGetEventsStream) Send(m *Event) error {
 	return x.stream.Send(m)
 }

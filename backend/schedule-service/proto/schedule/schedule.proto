@@ -3,36 +3,46 @@ syntax = "proto3";
 package gurdwara.schedule.service;
 
 service ScheduleService {
-    rpc GetEvent(DateTime) returns (stream Month) {}
-    rpc GetDay(DateTime) returns (stream Month) {}
-    rpc GetWeek(DateTime) returns (stream Month) {}
-    rpc GetMonth(DateTime) returns (stream Month) {}
+    rpc GetMonth(MonthInfo) returns (Month) {}
+    rpc GetDays(DaysInfo) returns (stream Day) {}
+    rpc GetEvents(MonthInfo) returns (stream Event) {}
 }
 
-message DateTime {
-    string dateTime = 1;
+message MonthInfo {
+    uint32 Year = 1;
+    uint32 MonthNum = 2;
 }
 
-message Event {
-    string ID = 1;
-    DateTime dateTime = 2;
-    string organizer = 3;
-    string description = 4;
+message DaysInfo {
+    string StartDate = 1;
+    string EndDate = 2;
 }
 
-message Day {
-    string ID = 1;
-    DateTime dateTime = 2;
-    string weekday = 3;
-    repeated string events = 4;
-}
-
-message Week {
-    string ID = 1;
-    repeated Day days = 2;
+message EventsInfo {
+    string StartDateTime = 1;
+    string EndDateTime = 2;
 }
 
 message Month {
     string ID = 1;
-    repeated Week weeks = 2;
+    uint32 MonthNum = 2;
+    repeated Day Days = 3;
+    uint32 Year = 4;
 }
+
+message Day {
+    string ID = 1;
+    string Date = 2;
+    uint32 WeekdayNum = 3;
+    repeated Event Events = 4;
+}
+
+message Event {
+    string ID = 1;
+    string StartDateTime = 2;
+    string EndDateTime = 3;
+    string Organizer = 4;
+    string Description = 5;
+}
+
+

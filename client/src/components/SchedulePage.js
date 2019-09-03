@@ -21,6 +21,11 @@ export class SchedulePage extends Component {
     this.handleSaveButtonClick = this.handleSaveButtonClick.bind(this);
   }
 
+  getCurrentDateTime() {
+    const today = new Date();
+    return today.toISOString();
+  }
+
   // Called before the Schedule is Rendered
   componentWillMount() {
     // Remove unnecessary styling
@@ -113,10 +118,7 @@ export class SchedulePage extends Component {
 
   render() {
     const MONTH_QUERY = gql`{
-      month(dateTime: "2016-11-10T11:34:33-05:00")
-    }`;
-    /*
-    {
+      month(dateTime: "${this.getCurrentDateTime()}") {
        weeks {
           days {
             dateTime
@@ -127,7 +129,8 @@ export class SchedulePage extends Component {
           }
         }
       }
-    */
+    }`;
+
     return (
       <div className="body">
 

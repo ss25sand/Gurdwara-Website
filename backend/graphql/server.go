@@ -6,16 +6,15 @@ import (
 	"log"
 	"net/http"
 
+	pb "github.com/ss25sand/Gurdwara-Website/backend/schedule-service/proto/schedule"
+
 	"github.com/go-chi/render"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/graphql-go/graphql"
+	"github.com/micro/go-micro"
+	"golang.org/x/net/context"
 )
-
-// Server will hold connection to the db as well as handlers
-type Server struct {
-	GqlSchema *graphql.Schema
-}
 
 type reqBody struct {
 	Query string `json:"query"`
@@ -37,7 +36,7 @@ func ExecuteQuery(query string, schema graphql.Schema) *graphql.Result {
 }
 
 // GraphQL returns an http.HandlerFunc for our /graphql endpoint
-func (s *Server) GraphQL() http.HandlerFunc {
+func GraphQL(s *graphql.Schema) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Check to ensure query was provided in the request body
 		if r.Body == nil {
@@ -53,7 +52,7 @@ func (s *Server) GraphQL() http.HandlerFunc {
 		}
 
 		// Execute graphql query
-		result := ExecuteQuery(rBody.Query, *s.GqlSchema)
+		result := ExecuteQuery(rBody.Query, *s)
 
 		// render.JSON comes from the chi/render package and handles
 		// marshalling to json, automatically escaping HTML and setting
@@ -63,18 +62,26 @@ func (s *Server) GraphQL() http.HandlerFunc {
 }
 
 func main() {
-	schema, err := graphql.NewSchema(graphql.SchemaConfig{ Query: root })
+	// Set up a connection to the server.
+	service := micro.NewService(
+		micro.Name("gurdwara.schedule.client"),
+		micro.Version("latest"),
+	)
+	service.Init()
+
+	client := pb.NewScheduleServiceClient("shippy.consignment.service.proto.consignment", service.Client())
+	ctx := context.Background()
+
+	resolver := &ScheduleResolver{client, ctx}
+
+	schema, err := graphql.NewSchema(graphql.SchemaConfig{ Query: getRootQuery(resolver) })
 	if err != nil {
 		log.Fatalf("failed to create new schema, error: %v", err)
 	}
 
-	s := Server{
-		GqlSchema: &schema,
-	}
-
 	// Create router and the graphql route with a Server method to handle it
 	router := mux.NewRouter()
-	router.HandleFunc("/graphql", s.GraphQL())
+	router.HandleFunc("/graphql", GraphQL(&schema))
 
 	allowedHeaders := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}) // "Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
 	allowedMethods := handlers.AllowedMethods([]string{"POST", "HEAD", "OPTIONS"})

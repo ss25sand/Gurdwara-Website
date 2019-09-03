@@ -13,7 +13,7 @@ type handler struct {
 	collection *mongoCollection
 }
 
-func isLeapYearFunc(year uint32) bool {
+func isLeapYearFunc(year int32) bool {
 	if year % 4 == 0 {
 		if year % 100 == 0 {
 			if year % 400 == 0 {
@@ -29,20 +29,20 @@ func isLeapYearFunc(year uint32) bool {
 	}
 }
 
-func getDoomsDayByCentury (year uint32) uint32 {
-	if (year - 3) % 4 == 0 {
+func getDoomsDayByCentury (century int32) int32 {
+	if (century - 3) % 4 == 0 {
 		return 3
-	} else if (year - 4) % 4 == 0 {
+	} else if (century - 4) % 4 == 0 {
 		return 2
-	} else if (year - 5) % 4 == 0 {
+	} else if (century - 5) % 4 == 0 {
 		return 0
 	} else {
 		return 5
 	}
 }
 
-func getDoomsDayByMonthMap(isLeapYear bool) map[uint32]uint32 {
-	doomsDayByMonth := map[uint32]uint32 {
+func getDoomsDayByMonthMap(isLeapYear bool) map[int32]int32 {
+	doomsDayByMonth := map[int32]int32 {
 		3: 14,
 		4: 4,
 		5: 9,
@@ -64,8 +64,8 @@ func getDoomsDayByMonthMap(isLeapYear bool) map[uint32]uint32 {
 	return doomsDayByMonth
 }
 
-func getMonthNumberToNumberOfDaysInMonthMap(isLeapYear bool) map[uint32]uint32 {
-	monthNumberToNumberOfDaysInMonthMap := map[uint32]uint32 {
+func getMonthNumberToNumberOfDaysInMonthMap(isLeapYear bool) map[int32]int32 {
+	monthNumberToNumberOfDaysInMonthMap := map[int32]int32 {
 		1: 31,
 		3: 31,
 		4: 30,
@@ -86,46 +86,127 @@ func getMonthNumberToNumberOfDaysInMonthMap(isLeapYear bool) map[uint32]uint32 {
 	return monthNumberToNumberOfDaysInMonthMap
 }
 
-func (h *handler) GetMonth(ctx context.Context, req *pb.MonthInfo, res *pb.Month) error {
-	isLeapYear := isLeapYearFunc(req.Year)
-	doomsDayByCentury := getDoomsDayByCentury(req.Year)
-	doomsDayByMonthMap := getDoomsDayByMonthMap(isLeapYear)
-	doomsDay := (doomsDayByCentury + ((req.Year % 100) / 12) + (req.Year % 100) % 12 + ((req.Year % 100) % 12) / 4) % 7
-	dateOfDoomsDayForMonthInfo := doomsDayByMonthMap[doomsDay]
-	numberOfDaysForMonthInfo := getMonthNumberToNumberOfDaysInMonthMap(isLeapYear)[req.MonthNum]
-	res.MonthNum = req.MonthNum
-	res.Year = req.Year
-	for i := uint32(1); i <= numberOfDaysForMonthInfo; i++ {
-		res.Days[i-1].Date = fmt.Sprintf("%d-%d-%d", req.Year, req.MonthNum, i)
-		res.Days[i-1].WeekdayNum = (doomsDay + dateOfDoomsDayForMonthInfo - i) % 7
-		events, err := h.collection.getEvents(ctx, &pb.EventsInfo{
-			StartDateTime: fmt.Sprintf("%d-%d-%dT12:00:00.000Z", req.Year, req.MonthNum, i),
-			EndDateTime: fmt.Sprintf("%d-%d-%dT12:00:00.000Z", req.Year, req.MonthNum, i+1),
-		})
-		if err != nil {
-			log.Fatal("An error occurred while fetching events.")
-			return err
+func makePos(value int32) int32 {
+	if value < 0 {
+		return makePos(value + 7)
+	}
+	return value
+}
+
+func getWeekdayNum(doomsDay int32, doomsDate int32, i int32) int32 {
+	//fmt.Println(doomsDay, doomsDate, i)
+	if doomsDate > i {
+		//fmt.Println(doomsDay - (doomsDate - i), (doomsDay - (doomsDate - i)) % 7)
+		return makePos((doomsDay - (doomsDate - i)) % 7)
+	} else {
+		//fmt.Println(doomsDay + (doomsDate + i), (doomsDay + (doomsDate + i)) % 7)
+		return makePos((doomsDay + (doomsDate + i)) % 7)
+	}
+}
+
+func getMonthInfoForDate(numberOfDaysForCurr int32, monthNumCurr int32, yearCurr int32, i int32) *pb.MonthInfo {
+	if i <= 0 {
+		if monthNumCurr - 1 == 0 {
+			return &pb.MonthInfo{
+				Year:                 yearCurr - 1,
+				MonthNum:             12,
+			}
+		} else {
+			return &pb.MonthInfo{
+				Year:                 yearCurr,
+				MonthNum:             monthNumCurr - 1,
+			}
 		}
-		for _, e := range events {
-			fmt.Println(res.Days[i-1].Events, res.Days[i-1].Events[0])
-			eventTemplate := res.Days[i-1].Events[0]
-			eventTemplate.ID = e.ID
-			eventTemplate.StartDateTime = e.StartDateTime
-			eventTemplate.EndDateTime = e.EndDateTime
-			eventTemplate.Organizer = e.Organizer
-			eventTemplate.Description = e.Description
-			res.Days[i-1].Events = append(res.Days[i-1].Events, eventTemplate)
+	} else if i > numberOfDaysForCurr {
+		if monthNumCurr + 1 == 13 {
+			return &pb.MonthInfo{
+				Year:                 yearCurr + 1,
+				MonthNum:             1,
+			}
+		} else {
+			return &pb.MonthInfo{
+				Year:                 yearCurr,
+				MonthNum:             monthNumCurr + 1,
+			}
+		}
+	} else {
+		return &pb.MonthInfo{
+			Year:                 yearCurr,
+			MonthNum:             monthNumCurr,
 		}
 	}
 }
 
-func (h *handler) GetDays(ctx context.Context, req *pb.DaysInfo, res *pb.ScheduleService_GetDaysStream) error {
-	panic("implement me")
+func (h *handler) GetMonth(ctx context.Context, req *pb.MonthInfo, res *pb.Month) error {
+	// get current month dooms day info
+	isCurrLeapYear := isLeapYearFunc(req.Year)
+	currDoomsDayByCentury := getDoomsDayByCentury(req.Year / 100)
+	currDoomsDayByMonthMap := getDoomsDayByMonthMap(isCurrLeapYear)
+	currDoomsDay := (currDoomsDayByCentury + ((req.Year % 100) / 12) + (req.Year % 100) % 12 + ((req.Year % 100) % 12) / 4) % 7
+	dateOfDoomsDayForCurr := currDoomsDayByMonthMap[req.MonthNum]
+	numberOfDaysForCurr := getMonthNumberToNumberOfDaysInMonthMap(isCurrLeapYear)[req.MonthNum]
+	firstOfMonthDay := getWeekdayNum(currDoomsDay, dateOfDoomsDayForCurr, 1)
+	lastOfMonthDay := getWeekdayNum(currDoomsDay, dateOfDoomsDayForCurr, numberOfDaysForCurr)
+	fmt.Println("Algorithm info:", isCurrLeapYear, currDoomsDayByCentury, currDoomsDay, dateOfDoomsDayForCurr, numberOfDaysForCurr)
+	// get previous month info
+	var numberOfDaysForPrev int32
+	if req.MonthNum - 1 == 0 {
+		isPrevLeapYear := isLeapYearFunc(req.Year - 1)
+		numberOfDaysForPrev = getMonthNumberToNumberOfDaysInMonthMap(isPrevLeapYear)[12]
+	} else {
+		numberOfDaysForPrev = getMonthNumberToNumberOfDaysInMonthMap(isCurrLeapYear)[req.MonthNum - 1]
+	}
+	// create response
+	res.MonthNum = req.MonthNum
+	res.Year = req.Year
+	for i := 1 - firstOfMonthDay; i < numberOfDaysForCurr + 6 - lastOfMonthDay; i++ {
+		monthInfo := getMonthInfoForDate(numberOfDaysForCurr, req.MonthNum, req.Year, i)
+		var resDayDate int32
+		if i <= 0 {
+			resDayDate = numberOfDaysForPrev + i
+		} else if i > numberOfDaysForCurr {
+			resDayDate = i - numberOfDaysForCurr
+		} else {
+			resDayDate = i
+		}
+		res.Days = append(res.Days, &pb.Day{
+			ID:                   "",
+			Date:                 fmt.Sprintf("%04d-%02d-%02d", monthInfo.Year, monthInfo.MonthNum, resDayDate),
+			WeekdayNum:           makePos((firstOfMonthDay + i - 1) % 7),
+			Events: 							nil,
+		})
+		events, err := h.collection.getEvents(ctx, &pb.EventsInfo{
+			StartDateTime: fmt.Sprintf("%04d-%02d-%02dT12:00:00.000Z", monthInfo.Year, monthInfo.MonthNum, resDayDate),
+			EndDateTime: fmt.Sprintf("%04d-%02d-%02dT12:00:00.000Z", monthInfo.Year, monthInfo.MonthNum, resDayDate + 1),
+		})
+		if err != nil {
+			log.Fatal("An error occurred while fetching events: ", err)
+			return err
+		}
+		for _, e := range events {
+			event := &pb.Event{
+				ID:                   e.ID,
+				StartDateTime:        e.StartDateTime,
+				EndDateTime:          e.EndDateTime,
+				Organizer:            e.Organizer,
+				Title:								e.Title,
+				Description:          e.Description,
+			}
+			res.Days[i + firstOfMonthDay - 1].Events = append(res.Days[i + firstOfMonthDay - 1].Events, event)
+		}
+		//fmt.Println("Current days array:", res.Days)
+	}
+	//fmt.Println("Final res: ", res)
+	return nil
 }
 
-func (h *handler) GetEvents(ctx context.Context, req *pb.EventsInfo, res *pb.ScheduleService_GetEventsStream) error {
-	panic("implement me")
-}
+//func (h *handler) GetDays(ctx context.Context, req *pb.DaysInfo, res *pb.ScheduleService_GetDaysStream) error {
+//	return nil
+//}
+//
+//func (h *handler) GetEvents(ctx context.Context, req *pb.EventsInfo, res *pb.ScheduleService_GetEventsStream) error {
+//	return nil
+//}
 
 
 

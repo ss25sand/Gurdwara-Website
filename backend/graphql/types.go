@@ -9,74 +9,109 @@ import(
 	"github.com/graphql-go/graphql/language/ast"
 )
 
-func serializeDate (value interface{}) interface{} {
+func serializeDate (value interface{}, layout string) interface{} {
 	switch value := value.(type) {
-		case time.Time:
-			return value.Format("2006-02-01")
-		default:
-			fmt.Printf("Got invalid type %T", value)
-			return "INVALID"
+	case time.Time:
+		return value.Format(layout)
+	case string:
+		return parseValueDate(value, layout)
+	default:
+		fmt.Printf("Got invalid type %T", value)
+		return "INVALID"
 	}
 }
 
-func parseValueDate (value interface{}) interface{} {
+func parseValueDate (value interface{}, layout string) interface{} {
 	switch tvalue := value.(type) {
 	case string:
-		if tval, err := time.Parse("2006-02-01", tvalue); err != nil {
-			return nil
+		if tval, err := time.Parse(layout, tvalue); err != nil {
+			return err
 		} else {
-			return tval
+			return serializeDate(tval, layout)
 		}
 	default:
-		return nil
+		return "INVALID"
 	}
 }
 
 var DateType = graphql.NewScalar(graphql.ScalarConfig{
-	Name: "Date",
+	Name: "DateType",
 	Description: "The date in yyyy-mm-dd format",
-	Serialize: serializeDate,
-	ParseValue: parseValueDate,
+	Serialize: func (value interface{}) interface{} { return serializeDate(value, "2006-01-02")},
+	ParseValue: func (value interface{}) interface{} { return parseValueDate(value, "2006-01-02")},
 	ParseLiteral: func(valueAST ast.Value) interface{} {
 		switch valueAST := valueAST.(type) {
-			case *ast.StringValue:
-				return parseValueDate(valueAST.Value)
-			default:
-				return nil
+		case *ast.StringValue:
+			return parseValueDate(valueAST.Value, "2006-01-02")
+		default:
+			return nil
+		}
+	},
+})
+
+var DateTimeType = graphql.NewScalar(graphql.ScalarConfig{
+	Name: "DateTimeType",
+	Description: "The date and time in ISO 1806 format",
+	Serialize: func (value interface{}) interface{} { return serializeDate(value, time.RFC3339)},
+	ParseValue: func (value interface{}) interface{} { return parseValueDate(value, time.RFC3339)},
+	ParseLiteral: func(valueAST ast.Value) interface{} {
+		switch valueAST := valueAST.(type) {
+		case *ast.StringValue:
+			return parseValueDate(valueAST.Value, time.RFC3339)
+		default:
+			return nil
 		}
 	},
 })
 
 var MonthType = graphql.NewScalar(graphql.ScalarConfig{
-	Name: "Date",
+	Name: "MonthType",
 	Description: "Month as a number from 1 to 12",
+	Serialize: func(value interface{}) interface{} {
+		println("Monthtype - Serialize error: ", value)
+		return nil
+	},
+	ParseValue: func(value interface{}) interface{} {
+		println("Monthtype - ParseValue error: ", value)
+		return nil
+	},
 	ParseLiteral: func(valueAST ast.Value) interface{} {
 		switch valueAST := valueAST.(type) {
-			case *ast.StringValue:
-				if intValue, err := strconv.ParseUint(valueAST.Value, 10,32); err == nil && intValue >= 1 && intValue <= 12 {
-					return intValue
-				} else {
-					return nil
-				}
-			default:
+		case *ast.StringValue, *ast.IntValue:
+			intValue, err := strconv.ParseUint(valueAST.GetValue().(string), 10,32)
+			println("Monthtype error: ", intValue, err)
+			if err == nil && intValue >= 1 && intValue <= 12 {
+				println("intValue is returned")
+				return int32(intValue)
+			} else {
 				return nil
+			}
+		default:
+			return nil
 		}
 	},
 })
 
+func parseAndSerializeWeekday(value string) interface{} {
+	intValue, err := strconv.ParseUint(value, 10,32)
+	if err == nil && intValue >= 0 && intValue <= 6 {
+		return int32(intValue)
+	} else {
+		return nil
+	}
+}
+
 var WeekdayType = graphql.NewScalar(graphql.ScalarConfig{
-	Name: "Date",
+	Name: "WeekdayType",
 	Description: "Weekday as a number from 0 to 6",
+	Serialize: func(value interface{}) interface{} { return parseAndSerializeWeekday(strconv.Itoa(int(value.(int32)))) },
+	ParseValue: func(value interface{}) interface{} { return parseAndSerializeWeekday(strconv.Itoa(int(value.(int32)))) },
 	ParseLiteral: func(valueAST ast.Value) interface{} {
 		switch valueAST := valueAST.(type) {
-			case *ast.StringValue:
-				if intValue, err := strconv.ParseUint(valueAST.Value, 10,32); err == nil && intValue >= 0 && intValue <= 6 {
-					return intValue
-				} else {
-					return nil
-				}
-			default:
-				return nil
+		case *ast.StringValue, *ast.IntValue:
+			return parseAndSerializeWeekday(valueAST.GetValue().(string))
+		default:
+			return nil
 		}
 	},
 })
@@ -111,7 +146,7 @@ var Day = graphql.NewObject(
 			"date": &graphql.Field{
 				Type: DateType,
 			},
-			"weekday": &graphql.Field{
+			"weekdayNum": &graphql.Field{
 				Type: WeekdayType,
 			},
 			"events": &graphql.Field{
@@ -129,10 +164,10 @@ var Event = graphql.NewObject(
 				Type: graphql.ID,
 			},
 			"startDateTime": &graphql.Field{
-				Type: graphql.DateTime,
+				Type: DateTimeType,
 			},
 			"endDateTime": &graphql.Field{
-				Type: graphql.DateTime,
+				Type: DateTimeType,
 			},
 			"organizer": &graphql.Field{
 				Type: graphql.String,

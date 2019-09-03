@@ -32,12 +32,16 @@ func main() {
 	}
 	client, err := CreateMongoConnection(uri)
 	if err != nil {
-		log.Panic(err)
+		log.Panic("Error connecting to mongo: ", err)
 	}
 	defer client.Disconnect(context.TODO())
 
 	eventCollection := &mongoCollection {
-		client.Database("gurdwara").Collection("events"),
+		collection: client.Database("gurdwara").Collection("events"),
+	}
+
+	if _, err := eventCollection.createDummyEvents(context.TODO()); err != nil {
+		log.Fatal("An error occurred while creating events: ", err)
 	}
 
 	// Register handler
@@ -45,6 +49,6 @@ func main() {
 
 	// Run the server
 	if err := srv.Run(); err != nil {
-		fmt.Println(err)
+		fmt.Println("Error running service", err)
 	}
 }

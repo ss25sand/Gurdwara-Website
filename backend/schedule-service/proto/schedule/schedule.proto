@@ -4,13 +4,13 @@ package gurdwara.schedule.service;
 
 service ScheduleService {
     rpc GetMonth(MonthInfo) returns (Month) {}
-    rpc GetDays(DaysInfo) returns (stream Day) {}
-    rpc GetEvents(MonthInfo) returns (stream Event) {}
+    //rpc GetDays(DaysInfo) returns (stream Day) {}
+    //rpc GetEvents(MonthInfo) returns (stream Event) {}
 }
 
 message MonthInfo {
-    uint32 Year = 1;
-    uint32 MonthNum = 2;
+    int32 Year = 1;
+    int32 MonthNum = 2;
 }
 
 message DaysInfo {
@@ -25,15 +25,15 @@ message EventsInfo {
 
 message Month {
     string ID = 1;
-    uint32 MonthNum = 2;
+    int32 MonthNum = 2;
     repeated Day Days = 3;
-    uint32 Year = 4;
+    int32 Year = 4;
 }
 
 message Day {
     string ID = 1;
     string Date = 2;
-    uint32 WeekdayNum = 3;
+    int32 WeekdayNum = 3;
     repeated Event Events = 4;
 }
 
@@ -42,7 +42,8 @@ message Event {
     string StartDateTime = 2;
     string EndDateTime = 3;
     string Organizer = 4;
-    string Description = 5;
+    string Title = 5;
+    string Description = 6;
 }
 
 

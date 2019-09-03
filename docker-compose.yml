@@ -8,7 +8,7 @@ services:
       context: ./backend
       dockerfile: ./graphql/Dockerfile
     ports:
-      - 50051:50051
+      - 4000:4000
 
   gurdwara-schedule-service:
     build:
@@ -22,12 +22,12 @@ services:
       - MICRO_REGISTRY_ADDRESS=mdns
       - DB_HOST=mongodb://datastore:27017
 
-  web-client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    ports:
-      - 4001:4001
+  # web-client:
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 4001:4001
 
   datastore:
     image: mongo

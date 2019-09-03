@@ -1,5 +1,5 @@
 .git
 .idea
 .DS_STORE
-node_modules
-build
+Dockerfile
+Makefile

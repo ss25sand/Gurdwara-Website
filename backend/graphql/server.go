@@ -29,7 +29,7 @@ func ExecuteQuery(query string, schema graphql.Schema) *graphql.Result {
 
 	// Error check
 	if len(result.Errors) > 0 {
-		fmt.Printf("Unexpected errors inside ExecuteQuery: %v", result.Errors)
+		fmt.Printf("Unexpected errors inside ExecuteQuery: %v\n", result.Errors)
 	}
 
 	return result
@@ -69,7 +69,10 @@ func main() {
 	)
 	service.Init()
 
-	client := pb.NewScheduleServiceClient("shippy.consignment.service.proto.consignment", service.Client())
+	client := pb.NewScheduleServiceClient(
+		"gurdwara.schedule.service",
+		service.Client(),
+	)
 	ctx := context.Background()
 
 	resolver := &ScheduleResolver{client, ctx}

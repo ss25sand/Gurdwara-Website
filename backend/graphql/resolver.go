@@ -13,15 +13,16 @@ type ScheduleResolver struct {
 }
 
 func (sr *ScheduleResolver) MonthResolver(p graphql.ResolveParams) (interface{}, error) {
-	year := p.Args["year"].(uint32)
-	monthNum := p.Args["month"].(uint32)
-
+	year := int32(p.Args["year"].(int))
+	monthNum := p.Args["month"].(int32)
+	
 	req := pb.MonthInfo {
 		Year: year,
 		MonthNum: monthNum,
 	}
+	result, err := sr.client.GetMonth(sr.ctx, &req)
 
-	return sr.client.GetMonth(sr.ctx, &req), nil
+	return result, err
 }
 
 func (sr *ScheduleResolver) WeekResolver(p graphql.ResolveParams) (interface{}, error) {

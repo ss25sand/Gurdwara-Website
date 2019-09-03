@@ -1,0 +1,5 @@
+build:
+	docker build -f ./graphql/Dockerfile -t graphql-server-image .
+
+run:
+	docker run -p 4000:4000 graphql-server-image

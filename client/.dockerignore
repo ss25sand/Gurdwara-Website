@@ -1,0 +1,9 @@
+.git
+.idea
+.DS_STORE
+node_modules
+build
+Dockerfile
+GurdwaraWebsiteToDoList.txt
+Makefile
+yarn-error.log

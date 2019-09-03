@@ -20,30 +20,30 @@ func getRootQuery(resolver *ScheduleResolver) *graphql.Object {
 				},
 				Resolve: resolver.MonthResolver,
 			},
-			"getDays": &graphql.Field{
-				Type: graphql.NewList(Day),
-				Args: graphql.FieldConfigArgument{
-					"startDate": &graphql.ArgumentConfig{
-						Type: DateType,
-					},
-					"endDate": &graphql.ArgumentConfig{
-						Type: DateType,
-					},
-				},
-				Resolve: resolver.DayResolver,
-			},
-			"getEvents": &graphql.Field{
-				Type: Event,
-				Args: graphql.FieldConfigArgument{
-					"startTime": &graphql.ArgumentConfig{
-						Type: DateType,
-					},
-					"endTime": &graphql.ArgumentConfig{
-						Type: DateType,
-					},
-				},
-				Resolve: resolver.DayResolver,
-			},
+			//"getDays": &graphql.Field{
+			//	Type: graphql.NewList(Day),
+			//	Args: graphql.FieldConfigArgument{
+			//		"startDate": &graphql.ArgumentConfig{
+			//			Type: DateType,
+			//		},
+			//		"endDate": &graphql.ArgumentConfig{
+			//			Type: DateType,
+			//		},
+			//	},
+			//	Resolve: resolver.DayResolver,
+			//},
+			//"getEvents": &graphql.Field{
+			//	Type: Event,
+			//	Args: graphql.FieldConfigArgument{
+			//		"startTime": &graphql.ArgumentConfig{
+			//			Type: DateType,
+			//		},
+			//		"endTime": &graphql.ArgumentConfig{
+			//			Type: DateType,
+			//		},
+			//	},
+			//	Resolve: resolver.DayResolver,
+			//},
 		}},
 	)
 }

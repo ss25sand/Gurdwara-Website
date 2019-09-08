@@ -77,7 +77,7 @@ func main() {
 
 	resolver := &ScheduleResolver{client, ctx}
 
-	schema, err := graphql.NewSchema(graphql.SchemaConfig{ Query: getRootQuery(resolver) })
+	schema, err := graphql.NewSchema(graphql.SchemaConfig{Query: getRootQuery(resolver)})
 	if err != nil {
 		log.Fatalf("failed to create new schema, error: %v", err)
 	}

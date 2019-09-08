@@ -31,11 +31,11 @@ func (m *mongoCollection) createDummyEvents(ctx context.Context) ([]interface{},
 	var allEvents []interface{}
 	for i := 1; i <= 3; i++ {
 		allEvents = append(allEvents, &pb.Event{
-			StartDateTime:        "2011-10-05T14:48:00.000Z",
-			EndDateTime:          "2011-10-05T15:48:00.000Z",
-			Organizer:            "Me",
-			Title: 								"Test Event",
-			Description:          "This is a event for testing purposes",
+			StartDateTime: "2011-10-05T14:48:00.000Z",
+			EndDateTime:   "2011-10-05T15:48:00.000Z",
+			Organizer:     "Me",
+			Title:         "Test Event",
+			Description:   "This is a event for testing purposes",
 		})
 	}
 	if result, err := m.collection.InsertMany(ctx, allEvents); err != nil {
@@ -48,11 +48,11 @@ func (m *mongoCollection) createDummyEvents(ctx context.Context) ([]interface{},
 }
 
 func (m *mongoCollection) getEvents(ctx context.Context, req *pb.EventsInfo) ([]*pb.Event, error) {
-	filter := bson.M {
-		"startdatetime": bson.M {
+	filter := bson.M{
+		"startdatetime": bson.M{
 			"$gte": req.StartDateTime,
 		},
-		"enddatetime": bson.M {
+		"enddatetime": bson.M{
 			"$lt": req.EndDateTime,
 		},
 	}

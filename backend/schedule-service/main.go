@@ -36,7 +36,7 @@ func main() {
 	}
 	defer client.Disconnect(context.TODO())
 
-	eventCollection := &mongoCollection {
+	eventCollection := &mongoCollection{
 		collection: client.Database("gurdwara").Collection("events"),
 	}
 

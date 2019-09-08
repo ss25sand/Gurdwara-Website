@@ -1,6 +1,6 @@
 package main
 
-import(
+import (
 	"fmt"
 	"strconv"
 	"time"
@@ -9,7 +9,7 @@ import(
 	"github.com/graphql-go/graphql/language/ast"
 )
 
-func serializeDate (value interface{}, layout string) interface{} {
+func serializeDate(value interface{}, layout string) interface{} {
 	switch value := value.(type) {
 	case time.Time:
 		return value.Format(layout)
@@ -21,7 +21,7 @@ func serializeDate (value interface{}, layout string) interface{} {
 	}
 }
 
-func parseValueDate (value interface{}, layout string) interface{} {
+func parseValueDate(value interface{}, layout string) interface{} {
 	switch tvalue := value.(type) {
 	case string:
 		if tval, err := time.Parse(layout, tvalue); err != nil {
@@ -35,10 +35,10 @@ func parseValueDate (value interface{}, layout string) interface{} {
 }
 
 var DateType = graphql.NewScalar(graphql.ScalarConfig{
-	Name: "DateType",
+	Name:        "DateType",
 	Description: "The date in yyyy-mm-dd format",
-	Serialize: func (value interface{}) interface{} { return serializeDate(value, "2006-01-02")},
-	ParseValue: func (value interface{}) interface{} { return parseValueDate(value, "2006-01-02")},
+	Serialize:   func(value interface{}) interface{} { return serializeDate(value, "2006-01-02") },
+	ParseValue:  func(value interface{}) interface{} { return parseValueDate(value, "2006-01-02") },
 	ParseLiteral: func(valueAST ast.Value) interface{} {
 		switch valueAST := valueAST.(type) {
 		case *ast.StringValue:
@@ -50,10 +50,10 @@ var DateType = graphql.NewScalar(graphql.ScalarConfig{
 })
 
 var DateTimeType = graphql.NewScalar(graphql.ScalarConfig{
-	Name: "DateTimeType",
+	Name:        "DateTimeType",
 	Description: "The date and time in ISO 1806 format",
-	Serialize: func (value interface{}) interface{} { return serializeDate(value, time.RFC3339)},
-	ParseValue: func (value interface{}) interface{} { return parseValueDate(value, time.RFC3339)},
+	Serialize:   func(value interface{}) interface{} { return serializeDate(value, time.RFC3339) },
+	ParseValue:  func(value interface{}) interface{} { return parseValueDate(value, time.RFC3339) },
 	ParseLiteral: func(valueAST ast.Value) interface{} {
 		switch valueAST := valueAST.(type) {
 		case *ast.StringValue:
@@ -65,7 +65,7 @@ var DateTimeType = graphql.NewScalar(graphql.ScalarConfig{
 })
 
 var MonthType = graphql.NewScalar(graphql.ScalarConfig{
-	Name: "MonthType",
+	Name:        "MonthType",
 	Description: "Month as a number from 1 to 12",
 	Serialize: func(value interface{}) interface{} {
 		println("Monthtype - Serialize error: ", value)
@@ -78,7 +78,7 @@ var MonthType = graphql.NewScalar(graphql.ScalarConfig{
 	ParseLiteral: func(valueAST ast.Value) interface{} {
 		switch valueAST := valueAST.(type) {
 		case *ast.StringValue, *ast.IntValue:
-			intValue, err := strconv.ParseUint(valueAST.GetValue().(string), 10,32)
+			intValue, err := strconv.ParseUint(valueAST.GetValue().(string), 10, 32)
 			println("Monthtype error: ", intValue, err)
 			if err == nil && intValue >= 1 && intValue <= 12 {
 				println("intValue is returned")
@@ -93,7 +93,7 @@ var MonthType = graphql.NewScalar(graphql.ScalarConfig{
 })
 
 func parseAndSerializeWeekday(value string) interface{} {
-	intValue, err := strconv.ParseUint(value, 10,32)
+	intValue, err := strconv.ParseUint(value, 10, 32)
 	if err == nil && intValue >= 0 && intValue <= 6 {
 		return int32(intValue)
 	} else {
@@ -102,10 +102,10 @@ func parseAndSerializeWeekday(value string) interface{} {
 }
 
 var WeekdayType = graphql.NewScalar(graphql.ScalarConfig{
-	Name: "WeekdayType",
+	Name:        "WeekdayType",
 	Description: "Weekday as a number from 0 to 6",
-	Serialize: func(value interface{}) interface{} { return parseAndSerializeWeekday(strconv.Itoa(int(value.(int32)))) },
-	ParseValue: func(value interface{}) interface{} { return parseAndSerializeWeekday(strconv.Itoa(int(value.(int32)))) },
+	Serialize:   func(value interface{}) interface{} { return parseAndSerializeWeekday(strconv.Itoa(int(value.(int32)))) },
+	ParseValue:  func(value interface{}) interface{} { return parseAndSerializeWeekday(strconv.Itoa(int(value.(int32)))) },
 	ParseLiteral: func(valueAST ast.Value) interface{} {
 		switch valueAST := valueAST.(type) {
 		case *ast.StringValue, *ast.IntValue:

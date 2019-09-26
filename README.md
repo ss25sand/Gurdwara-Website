@@ -8,8 +8,8 @@ Current Website: https://sgsscambridge.wordpress.com/
 
 ## Desciption
 
-This website is designed with a React front end and Express back end.
+This website is designed with a React front end and back end optimized for scability. The back end is designed using a Golang Micro-service Architecture using go-micro and gRPC with a GraphQL API and Postgresql database. Currently tested and deployed using docker.
 
 ## Features
 
-Website includes multiple pages using React Router, an image slider and a RESTful API login system that allows admin to change program events in a schedule that is only visible to viewers implemented by making requests to a MySQL Database.
+Website includes multiple pages, an image slider and a GraphQL API login system that allows admin to schedule program events in a calendar based on user booking requests.

@@ -1,6 +1,6 @@
 #topRight {
     position: absolute;
-    top: 0px;
+    top: 0;
     right: 20px;
 }
 header h1 {
@@ -31,6 +31,7 @@ nav ul li {
 nav ul li a {
     color: white;
     text-decoration: none;
+    vertical-align: middle;
 }
 .orangeHover:hover {
     color: darkorange;
@@ -55,25 +56,64 @@ nav ul li a {
     color: black;
     border-color: white;
 }
+#accountIcon {
+    width: auto;
+    max-height: 50px;
+    position: static;
+    left: auto;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropbtn:hover + .dropdown-content, .dropdown-content:hover {
+    display: block;
+    cursor: pointer;
+}
+
 @media screen and (max-width: 1100px) {
   header h1 {
     display: none;
   }
 }
 @media screen and (max-width: 750px) {
-  header h1 {
-    display: block;
-  }
-  #topRight {
-    display: none;
-  }
+    header h1 {
+        display: block;
+    }
+    .orangeHover {
+        display: none;
+    }
+    #topRight {
+        height: 0;
+    }
+    /*#accountIcon {*/
+    /*    display: inline-block;*/
+    /*    width: auto;*/
+    /*    max-height: 60px;*/
+    /*    position: static;*/
+    /*    left: auto;*/
+    /*}*/
 }
-@media screen and (max-width: 685px) {
-  header h1 {
-    display: block;
-    margin-top: 10px;
-  }
-  #topRight {
-    display: none;
-  }
+@media screen and (max-width: 500px) {
+    #topRight {
+        display: none;
+    }
 }

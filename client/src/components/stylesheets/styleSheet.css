@@ -244,3 +244,8 @@ strong {
     padding-top: 40%;
   }
 }
+@media screen and (max-width: 500px) {
+    .inPicHeading {
+        font-size: 50px;
+    }
+}

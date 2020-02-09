@@ -1,3 +1,5 @@
+// "use strict";
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -10,12 +12,14 @@ import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql'
+  uri: 'http://localhost:4000/graphql',
+  credentials: 'include'
 });
 
 const client = new ApolloClient({
   link: httpLink,
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  credentials: 'include'
 });
 
 ReactDOM.render(

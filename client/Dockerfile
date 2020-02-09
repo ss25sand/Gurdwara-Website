@@ -24,7 +24,7 @@ COPY --from=build-deps /app/client/build .
 CMD ["serve", "-p", "4001", "-s", "."]
 
 
-## Using start to run app:
+# Using start to run app:
 #FROM node:12.2.0-alpine
 #
 #WORKDIR /app/client

@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/ss25sand/Gurdwara-Website/backend/graphql/schedule"
 	"log"
 	"net/http"
 
@@ -20,24 +20,10 @@ type reqBody struct {
 	Query string `json:"query"`
 }
 
-// ExecuteQuery runs our graphql queries
-func ExecuteQuery(query string, schema graphql.Schema) *graphql.Result {
-	result := graphql.Do(graphql.Params{
-		Schema:        schema,
-		RequestString: query,
-	})
-
-	// Error check
-	if len(result.Errors) > 0 {
-		fmt.Printf("Unexpected errors inside ExecuteQuery: %v\n", result.Errors)
-	}
-
-	return result
-}
-
 // GraphQL returns an http.HandlerFunc for our /graphql endpoint
 func GraphQL(s *graphql.Schema) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		// Check to ensure query was provided in the request body
 		if r.Body == nil {
 			http.Error(w, "Must provide graphql query in request body", 400)
@@ -51,8 +37,26 @@ func GraphQL(s *graphql.Schema) http.HandlerFunc {
 			http.Error(w, "Error parsing JSON request body", 400)
 		}
 
+		token, err := r.Cookie("accessToken")
+		if err != nil {
+			http.Error(w, "Error getting access token: " + err.Error(), 400)
+		}
+
 		// Execute graphql query
-		result := ExecuteQuery(rBody.Query, *s)
+		result := graphql.Do(graphql.Params{
+			Schema:        *s,
+			RequestString: rBody.Query,
+			Context: 			 context.WithValue(context.Background(), "token", token),
+		})
+
+		// Error check
+		if len(result.Errors) > 0 {
+			errMessages := ""
+			for _, e := range result.Errors {
+				errMessages += e.Message
+			}
+			http.Error(w, "Unexpected errors inside ExecuteQuery: " + errMessages, 400)
+		}
 
 		// render.JSON comes from the chi/render package and handles
 		// marshalling to json, automatically escaping HTML and setting
@@ -75,9 +79,13 @@ func main() {
 	)
 	ctx := context.Background()
 
-	resolver := &ScheduleResolver{client, ctx}
+	//authResolver := &auth.Resolver{"http://localhost:8080", ctx}
+	scheduleResolver := &schedule.Resolver{client, ctx}
 
-	schema, err := graphql.NewSchema(graphql.SchemaConfig{Query: getRootQuery(resolver)})
+	schema, err := graphql.NewSchema(graphql.SchemaConfig{
+		Query:    getRootQuery(scheduleResolver),
+		Mutation: getRootMutation(scheduleResolver),
+	})
 	if err != nil {
 		log.Fatalf("failed to create new schema, error: %v", err)
 	}
@@ -88,9 +96,10 @@ func main() {
 
 	allowedHeaders := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}) // "Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
 	allowedMethods := handlers.AllowedMethods([]string{"POST", "HEAD", "OPTIONS"})
-	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
+	allowedOrigins := handlers.AllowedOrigins([]string{"http://localhost:4001", "http://localhost:4000/graphql"})
+	allowedCredentials := handlers.AllowCredentials()
 
-	if err := http.ListenAndServe(":4000", handlers.CORS(allowedHeaders, allowedMethods, allowedOrigins)(router)); err != nil {
+	if err := http.ListenAndServe(":4000", handlers.CORS(allowedHeaders, allowedMethods, allowedOrigins, allowedCredentials)(router)); err != nil {
 		log.Fatal("Failed to listen on port 4000!")
 	}
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 
 	pb "github.com/ss25sand/Gurdwara-Website/backend/schedule-service/proto/schedule"
@@ -100,7 +101,7 @@ func getWeekdayNum(doomsDay int32, doomsDate int32, i int32) int32 {
 		return makePos((doomsDay - (doomsDate - i)) % 7)
 	} else {
 		//fmt.Println(doomsDay + (doomsDate + i), (doomsDay + (doomsDate + i)) % 7)
-		return makePos((doomsDay + (doomsDate + i)) % 7)
+		return makePos((doomsDay + (i - doomsDate)) % 7)
 	}
 }
 
@@ -142,12 +143,12 @@ func (h *handler) GetMonth(ctx context.Context, req *pb.MonthInfo, res *pb.Month
 	isCurrLeapYear := isLeapYearFunc(req.Year)
 	currDoomsDayByCentury := getDoomsDayByCentury(req.Year / 100)
 	currDoomsDayByMonthMap := getDoomsDayByMonthMap(isCurrLeapYear)
-	currDoomsDay := (currDoomsDayByCentury + ((req.Year % 100) / 12) + (req.Year%100)%12 + ((req.Year%100)%12)/4) % 7
+	currDoomsDay := (currDoomsDayByCentury + ((req.Year % 100) / 12) + (req.Year % 100) % 12 + ((req.Year % 100) % 12) / 4) % 7
 	dateOfDoomsDayForCurr := currDoomsDayByMonthMap[req.MonthNum]
 	numberOfDaysForCurr := getMonthNumberToNumberOfDaysInMonthMap(isCurrLeapYear)[req.MonthNum]
 	firstOfMonthDay := getWeekdayNum(currDoomsDay, dateOfDoomsDayForCurr, 1)
 	lastOfMonthDay := getWeekdayNum(currDoomsDay, dateOfDoomsDayForCurr, numberOfDaysForCurr)
-	fmt.Println("Algorithm info:", isCurrLeapYear, currDoomsDayByCentury, currDoomsDay, dateOfDoomsDayForCurr, numberOfDaysForCurr)
+	fmt.Println("Algorithm info:", isCurrLeapYear, currDoomsDayByCentury, currDoomsDay, dateOfDoomsDayForCurr, numberOfDaysForCurr, firstOfMonthDay, lastOfMonthDay)
 	// get previous month info
 	var numberOfDaysForPrev int32
 	if req.MonthNum-1 == 0 {
@@ -159,7 +160,7 @@ func (h *handler) GetMonth(ctx context.Context, req *pb.MonthInfo, res *pb.Month
 	// create response
 	res.MonthNum = req.MonthNum
 	res.Year = req.Year
-	for i := 1 - firstOfMonthDay; i < numberOfDaysForCurr+6-lastOfMonthDay; i++ {
+	for i := 1 - firstOfMonthDay; i <= numberOfDaysForCurr+6-lastOfMonthDay; i++ {
 		monthInfo := getMonthInfoForDate(numberOfDaysForCurr, req.MonthNum, req.Year, i)
 		var resDayDate int32
 		if i <= 0 {
@@ -207,3 +208,14 @@ func (h *handler) GetMonth(ctx context.Context, req *pb.MonthInfo, res *pb.Month
 //func (h *handler) GetEvents(ctx context.Context, req *pb.EventsInfo, res *pb.ScheduleService_GetEventsStream) error {
 //	return nil
 //}
+
+func (h *handler) CreateEvent(ctx context.Context, req *pb.Event, res *pb.EventRes) error {
+	if insertId, err := h.collection.createEvent(ctx, req); err != nil {
+		log.Fatal("An error occurred while creating event: ", err)
+		return err
+	} else {
+		res.InsertID = insertId.(primitive.ObjectID).Hex()
+		return nil
+	}
+	return nil
+}

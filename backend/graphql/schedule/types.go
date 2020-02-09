@@ -1,12 +1,11 @@
-package main
+package schedule
 
 import (
 	"fmt"
-	"strconv"
-	"time"
-
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
+	"strconv"
+	"time"
 )
 
 func serializeDate(value interface{}, layout string) interface{} {
@@ -64,27 +63,41 @@ var DateTimeType = graphql.NewScalar(graphql.ScalarConfig{
 	},
 })
 
+func parseAndSerializeMonthNum(value string) (int32, error) {
+	intValue, err := strconv.ParseUint(value, 10, 32)
+	println("Monthtype error: ", intValue, err)
+	if err == nil && intValue >= 1 && intValue <= 12 {
+		println("intValue is returned")
+		return int32(intValue), nil
+	} else {
+		return 0, err
+	}
+}
+
 var MonthType = graphql.NewScalar(graphql.ScalarConfig{
 	Name:        "MonthType",
 	Description: "Month as a number from 1 to 12",
 	Serialize: func(value interface{}) interface{} {
-		println("Monthtype - Serialize error: ", value)
-		return nil
+		if res, err := parseAndSerializeMonthNum(strconv.Itoa(int(value.(int32)))); err != nil {
+			return err
+		} else {
+			return res
+		}
 	},
 	ParseValue: func(value interface{}) interface{} {
-		println("Monthtype - ParseValue error: ", value)
-		return nil
+		if res, err := parseAndSerializeMonthNum(strconv.Itoa(int(value.(int32)))); err != nil {
+			return err
+		} else {
+			return res
+		}
 	},
 	ParseLiteral: func(valueAST ast.Value) interface{} {
 		switch valueAST := valueAST.(type) {
 		case *ast.StringValue, *ast.IntValue:
-			intValue, err := strconv.ParseUint(valueAST.GetValue().(string), 10, 32)
-			println("Monthtype error: ", intValue, err)
-			if err == nil && intValue >= 1 && intValue <= 12 {
-				println("intValue is returned")
-				return int32(intValue)
+			if res, err := parseAndSerializeMonthNum(valueAST.GetValue().(string)); err != nil {
+				return err
 			} else {
-				return nil
+				return res
 			}
 		default:
 			return nil
@@ -123,7 +136,7 @@ var Month = graphql.NewObject(
 			"id": &graphql.Field{
 				Type: graphql.ID,
 			},
-			"monthName": &graphql.Field{
+			"monthNum": &graphql.Field{
 				Type: MonthType,
 			},
 			"days": &graphql.Field{
@@ -174,32 +187,6 @@ var Event = graphql.NewObject(
 			},
 			"description": &graphql.Field{
 				Type: graphql.String,
-			},
-		},
-	},
-)
-
-var User = graphql.NewObject(
-	graphql.ObjectConfig{
-		Name: "User",
-		Fields: graphql.Fields{
-			"id": &graphql.Field{
-				Type: graphql.ID,
-			},
-			"name": &graphql.Field{
-				Type: graphql.String,
-			},
-			"username": &graphql.Field{
-				Type: graphql.String,
-			},
-			"password": &graphql.Field{
-				Type: graphql.String,
-			},
-			"email": &graphql.Field{
-				Type: graphql.String,
-			},
-			"phoneNumber": &graphql.Field{
-				Type: graphql.Int,
 			},
 		},
 	},

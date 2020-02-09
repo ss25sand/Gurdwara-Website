@@ -1,0 +1,65 @@
+.popup {
+    /*border: 5px solid red;*/
+    /*width: 200px;*/
+    /*height: 200px;*/
+    background: white;
+    border-radius: 3px;
+    /*box-shadow: 5px 5px 3px lightgrey;*/
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    display: grid;
+    grid-template: repeat(5, 1fr) / 1fr 20fr;
+}
+.popup_inner {
+    position: absolute;
+    left: 25%;
+    right: 25%;
+    top: 25%;
+    bottom: 25%;
+    margin: auto;
+    border-radius: 20px;
+    background: white;
+}
+
+.icon {
+    /*border: 5px solid red;*/
+    width: 15px;
+    height: 15px;
+    margin: 10px 20px 10px 20px;
+    justify-self: center;
+    align-self: center;
+}
+
+form > input[type="text"], form > textarea, form > div {
+    /*border: 5px solid red;*/
+    width: 90%;
+    justify-self: stretch;
+    align-self: center;
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+input[type="text"], textarea[type="text"] {
+    padding: 5px 10px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.submitPanel {
+    display: inline-block;
+    text-align: end;
+    /*align-content: center;*/
+}
+
+.submitPanel > input[type="submit"] {
+    /*border: 5px solid red;*/
+    /*width: 100%;*/
+    background-color: #1abc9c;
+    color: white;
+    padding: 7px 15px;
+    margin: 8px 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}

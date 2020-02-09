@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {EventPopup} from "./EventPopup.js";
 import './stylesheets/SchedulePage.css';
 import './stylesheets/styleSheet.css';
 import $ from 'jquery';
-import { Query } from 'react-apollo'
+import {Query} from 'react-apollo'
 import gql from 'graphql-tag'
 
 // Component to render Calendar
@@ -11,20 +12,81 @@ export class SchedulePage extends Component {
     super(props);
     // Set Initial States
     this.state = {
-      message: '',
-      textareaArray: [],
-      data: {},
-      updated: false
+      showEventPopup: false,
+      popupPosition: {
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: 0,
+        height: 0,
+      },
     };
-    // Bind this to the event handlers
-    this.handleTextareaChange = this.handleTextareaChange.bind(this);
-    this.handleSaveButtonClick = this.handleSaveButtonClick.bind(this);
+    // Bind this to the event handlers --> do I still have to do this?
+    this.togglePopup = this.togglePopup.bind(this);
+    this.onDateClick = this.onDateClick.bind(this);
   }
 
-  getCurrentDateTime() {
-    const today = new Date();
-    // return today.toISOString();
-    return today;
+  static getCurrentDateTime() {
+    return new Date();
+  }
+
+  togglePopup() {
+    this.setState({
+      showEventPopup: !this.state.showEventPopup
+    });
+  }
+
+  onDateClick(e) {
+    const relPosition = e.target.getBoundingClientRect();
+    const absPosition = $(e.target).position();
+    if (absPosition.left < $(window).width() / 2 && relPosition.top < $(window).height() / 2) { // top left quad
+      this.setState({
+        popupPosition: {
+          left: absPosition.left + relPosition.width,
+          top: absPosition.top,
+          right: absPosition.left + relPosition.width * 2,
+          bottom: absPosition.top + relPosition.height,
+          width: relPosition.width * 2,
+          height: relPosition.height * 3,
+        },
+      });
+    } else if (absPosition.left > $(window).width() / 2 && relPosition.top < $(window).height() / 2) { // top right quad
+      this.setState({
+        popupPosition: {
+          left: absPosition.left - relPosition.width * 2,
+          top: absPosition.top,
+          right: absPosition.left,
+          bottom: absPosition.top + relPosition.height,
+          width: relPosition.width * 2,
+          height: relPosition.height * 3,
+        },
+      });
+    } else if (absPosition.left < $(window).width() / 2 && relPosition.top > $(window).height() / 2) { // bottom left quad
+      this.setState({
+        popupPosition: {
+          left: absPosition.left + relPosition.width,
+          top: absPosition.top - relPosition.height * 2.5,
+          right: absPosition.left + relPosition.width * 2,
+          bottom: absPosition.top - relPosition.height * 1.5,
+          width: relPosition.width * 2,
+          height: relPosition.height * 3,
+        },
+      });
+    } else {
+      this.setState({
+        popupPosition: {
+          left: absPosition.left - relPosition.width * 2,
+          top: absPosition.top - relPosition.height * 2.5,
+          right: absPosition.left,
+          bottom: absPosition.top - relPosition.height * 1.5,
+          width: relPosition.width * 2,
+          height: relPosition.height * 3,
+        },
+      });
+    }
+
+    this.togglePopup();
   }
 
   // Called before the Schedule is Rendered
@@ -34,46 +96,10 @@ export class SchedulePage extends Component {
     $('.button').hide();
   }
 
-  // Make put request to Update Database when SAVE button is clicked
-  handleSaveButtonClick() {
-    if(this.state.updated) {
-      let endpoint = $.param({ array: this.state.textareaArray });
-      fetch(`/users/update-event?${endpoint}`)
-        .then( res => res.json())
-        .then( message => {
-          this.setState({ message: message })
-        });
-    } else {
-      this.setState({ message: "No Updates Were Made..." });
-    }
-  }
-
-  // Event handler to automatically update the text entered inside the textarea
-  handleTextareaChange(e) {
-    // Make a formated array with updated events
-    let newEvent = this.state.textareaArray.map(day => {
-      if(day.id === Number(e.target.id)) {
-        return {
-          id: Number(e.target.id),
-          text: e.target.value
-        }
-      } else {
-        return {
-          id: day.id,
-          text: day.text
-        }
-      }
-    });
-    // Set the state
-    this.setState({
-      textareaArray: [...newEvent],
-      updated: true
-    });
-  }
-
   render() {
     const MONTH_QUERY = gql`{
-      getMonth(year: ${this.getCurrentDateTime().getFullYear()}, month: ${this.getCurrentDateTime().getMonth()}) {
+      getMonth(year: ${SchedulePage.getCurrentDateTime().getFullYear()}, month: ${SchedulePage.getCurrentDateTime().getMonth() + 1}) {
+        monthNum,
         days {
           date,
           weekdayNum,
@@ -103,71 +129,65 @@ export class SchedulePage extends Component {
             </p>
         </div>
 
-    {/* Calendar */}
+      {/* Calendar */}
+        <div id="calendarContainer">
 
-        {/* Render Month Heading */}
-        <div className="month">
-          <ul>
-            <li className="prevMonth">&#10094;</li>
-            <li className="nextMonth">&#10095;</li>
-            <li>
+          {/* Render Month Heading */}
+          <div className="month">
+            <div>
+              <div className="prevMonth">&#10094;</div>
+              <div className="nextMonth">&#10095;</div>
               <div>
-                February <br/>
-                <span style={{"fontSize":18}}>2019</span>
+                <div>
+                  {SchedulePage.getCurrentDateTime().toLocaleString('default', { month: 'long' })} <br/>
+                  <span style={{"fontSize":18}}>{SchedulePage.getCurrentDateTime().getFullYear()}</span>
+                </div>
               </div>
-            </li>
-          </ul>
-        </div>
+            </div>
+          </div>
 
-        {/* Render weekday Headings */}
-        <ul className="weekdays">
-          <li>Su</li>
-          <li>Mo</li>
-          <li>Tu</li>
-          <li>We</li>
-          <li>Th</li>
-          <li>Fr</li>
-          <li>Sa</li>
-        </ul>
+          {/* Render weekday Headings */}
+          <div className="weekdays" style={{gridArea: "4 / 1 / 5 / 2"}}>Sun</div>
+          <div className="weekdays" style={{gridArea: "4 / 2 / 5 / 3"}}>Mon</div>
+          <div className="weekdays" style={{gridArea: "4 / 3 / 5 / 4"}}>Tue</div>
+          <div className="weekdays" style={{gridArea: "4 / 4 / 5 / 5"}}>Wed</div>
+          <div className="weekdays" style={{gridArea: "4 / 5 / 5 / 6"}}>Thu</div>
+          <div className="weekdays" style={{gridArea: "4 / 6 / 5 / 7"}}>Fri</div>
+          <div className="weekdays" style={{gridArea: "4 / 7 / 5 / 8"}}>Sat</div>
 
-        {/* Iterate through the current textareaArray state to create the days */}
-        <Query query={MONTH_QUERY}>
-          {
-            (result) => {
-              console.log(result);
-              if ($.isEmptyObject(result.data)) {
-                return ""
-              } else {
-                return (
-                  <form className="days">
-                    {
-                      result.data.getMonth.days.map((day, index) => {
-                        console.log(day);
-                        let digitClass = "";
-                        if(day.id < 10) {
-                          digitClass = "oneDigit";
-                        }
-                        return( <li> <span className = {digitClass}>{day.date}</span> <textarea id = {day.date} type = 'text' value = {day.text} onChange = {this.handleTextareaChange} disabled/> </li> );
-                      })
-                    }
-                  </form>
-                )
+          {/* Iterate through the current textareaArray state to create the days */}
+          <Query query={MONTH_QUERY}>
+            {
+              (result) => {
+                if ($.isEmptyObject(result.data)) {
+                  return null;
+                } else {
+                  let rowCounter = 4;
+                  let colCounter = 0;
+                  return (
+                    result.data.getMonth.days.map((day, index) => {
+                      colCounter++;
+                      if (index % 7 === 0) {
+                        rowCounter++;
+                        colCounter = 1;
+                      }
+                      let curDate = new Date(day.date.toString()+"T12:00:00Z");
+                      let dayActiveClass = result.data.getMonth.monthNum - 1 !==  curDate.getMonth() ? "inactive" : "";
+                      return(
+                        <div key={day.date} className={`days ${dayActiveClass}`} style={{gridArea: `${rowCounter} / ${colCounter} / ${rowCounter+1} / ${colCounter+1}`}} onClick={this.onDateClick}>
+                          <span>{curDate.getDate()}</span>
+                        </div>
+                      );
+                    })
+                  )
+                }
               }
             }
-          }
-        </Query>
+          </Query>
 
-        {/* SAVE button */}
-        <button className = "button" onClick = {this.handleSaveButtonClick} style={{display: "none"}}> Save </button>
+        </div>
 
-        {/* Message Displayer */}
-        <h4> {this.state.message} </h4>
-
-        {/*<Query query={MONTH_QUERY}>*/}
-        {/*  {*/}
-        {/*    (result) => $.isEmptyObject(result.data) ? "" : result.data.month*/}
-        {/*  }*/}
-        {/*</Query>*/}
+        { this.state.showEventPopup ? <EventPopup position={this.state.popupPosition} closePopup={this.togglePopup}/> : null }
 
       </div>
     );

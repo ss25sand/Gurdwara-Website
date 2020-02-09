@@ -4,7 +4,6 @@ package gurdwara.schedule.service;
 
 service ScheduleService {
     rpc GetMonth(MonthInfo) returns (Month) {}
-    rpc CreateEvent(Event) returns (EventRes) {}
     //rpc GetDays(DaysInfo) returns (stream Day) {}
     //rpc GetEvents(MonthInfo) returns (stream Event) {}
 }
@@ -14,13 +13,14 @@ message MonthInfo {
     int32 MonthNum = 2;
 }
 
+message DaysInfo {
+    string StartDate = 1;
+    string EndDate = 2;
+}
+
 message EventsInfo {
     string StartDateTime = 1;
     string EndDateTime = 2;
-}
-
-message EventRes {
-    string InsertID = 1;
 }
 
 message Month {

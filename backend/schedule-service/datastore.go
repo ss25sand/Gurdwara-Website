@@ -8,7 +8,6 @@ import (
 
 	pb "github.com/ss25sand/Gurdwara-Website/backend/schedule-service/proto/schedule"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/mgo.v2/bson"
@@ -28,27 +27,10 @@ type DataStore interface {
 	getEvents(ctx context.Context, req *pb.EventsInfo) ([]*pb.Event, error)
 }
 
-type MongoEvent struct {
-	StartDateTime string
-	EndDateTime string
-	Organizer string
-	Title string
-	Description string
-}
-
-type MongoEventSerializable struct {
-	ID primitive.ObjectID `bson:"_id,omitempty"`
-	StartDateTime string `bson:"startdatetime,omitempty"`
-	EndDateTime string `bson:"enddatetime,omitempty"`
-	Organizer string `bson:"organizer,omitempty"`
-	Title string `bson:"title,omitempty"`
-	Description string `bson:"description,omitempty"`
-}
-
 func (m *mongoCollection) createDummyEvents(ctx context.Context) ([]interface{}, error) {
 	var allEvents []interface{}
 	for i := 1; i <= 3; i++ {
-		allEvents = append(allEvents, &MongoEvent{
+		allEvents = append(allEvents, &pb.Event{
 			StartDateTime: "2011-10-05T14:48:00.000Z",
 			EndDateTime:   "2011-10-05T15:48:00.000Z",
 			Organizer:     "Me",
@@ -83,20 +65,12 @@ func (m *mongoCollection) getEvents(ctx context.Context, req *pb.EventsInfo) ([]
 	fmt.Println("This is the find result", cur)
 	var res []*pb.Event
 	for cur.Next(ctx) {
-		var template *MongoEventSerializable
-		if err := cur.Decode(&template); err != nil {
-			log.Fatal("Error decoding event ", err)
+		var event *pb.Event
+		if err := cur.Decode(&event); err != nil {
+			log.Fatal("Error decoding event", err)
 			return nil, err
 		}
-		fmt.Println("Decoded: ", *template)
-		res = append(res, &pb.Event {
-			ID: template.ID.Hex(),
-			StartDateTime: template.StartDateTime,
-			EndDateTime: template.EndDateTime,
-			Organizer: template.Organizer,
-			Title: template.Title,
-			Description: template.Description,
-		})
+		res = append(res, event)
 	}
 	if err := cur.Err(); err != nil {
 		log.Fatal("Error while iterating: ", err)
@@ -108,14 +82,4 @@ func (m *mongoCollection) getEvents(ctx context.Context, req *pb.EventsInfo) ([]
 	}
 	fmt.Println("This is the db result", res)
 	return res, nil
-}
-
-func (m *mongoCollection) createEvent(ctx context.Context, event *pb.Event) (interface{}, error) {
-	if result, err := m.collection.InsertOne(ctx, event); err != nil {
-		log.Fatal("Error inserting events in mongo", err)
-		return nil, err
-	} else {
-		fmt.Printf("Insert Ids: %v \n", result.InsertedID)
-		return result.InsertedID, err
-	}
 }
